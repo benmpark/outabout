@@ -1,0 +1,40 @@
+body {
+  background-color: white;
+  font-family: "Jost", sans-serif;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-align: center;
+}
+
+footer {
+  font-size: 0.75em;
+  text-align: center;
+}
+
+.main_info {
+  font-size: 1.5em;
+}
+
+#forecast_range_and_results .btn {
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom: 0px;
+}
+
+#settings .form-label {
+  font-weight: 600;
+}
+
+#absolute_hours .btn,
+#sun_hours .btn {
+  border-radius: 0px;
+  border: 0px;
+}
