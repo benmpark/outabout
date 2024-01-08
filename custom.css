@@ -20,7 +20,12 @@ footer {
 }
 
 .main_info {
-  font-size: 1.5em;
+  font-size: 1.3em;
+}
+
+#found-location,
+#current-conditions {
+  font-size: 1.1em;
 }
 
 #forecast_range_and_results .btn {
@@ -37,4 +42,9 @@ footer {
 #sun_hours .btn {
   border-radius: 0px;
   border: 0px;
+}
+
+.btn-time:hover {
+  color: #000;
+  background-color: #fff;
 }
