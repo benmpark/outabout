@@ -12,11 +12,8 @@ I'm wrapping up the initial version of the front end of the site, where the stru
 
 ### Next Steps
 
-- Get more weather data via the API calls
-- Create the function that will take the data and find the best time (based on preferences, availability) to get out and about (or 'outabout')
-- Deal with the relative-to-sun timing
-  - convert the phrases (e.g., morning golden hour) to specific times
-  - disable already-passed solar events based on the current time
+- Create the function that will take the data and find the best time (based on preferences, availability) to get out and about (or 'outabout')\
+- Tidy up the layout.
 - Time zone support (detect via browser, but also update based on location)
 
 ## Contents
