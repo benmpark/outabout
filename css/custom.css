@@ -24,14 +24,33 @@ footer {
 }
 
 #found-location,
+#coordinates {
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
 #current-conditions {
   font-size: 1.1em;
+  font-weight: 300;
 }
 
 #forecast_range_and_results .btn {
+  font-size: 1.5em;
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
   border-bottom: 0px;
+  width: 33%;
+  line-height: 0.9em;
+}
+
+.light-shade {
+  background-color: #eee;
+}
+
+.daily-min-max,
+.solar-times {
+  font-size: small;
+  font-style: italic;
 }
 
 #settings .form-label {
