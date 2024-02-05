@@ -38,6 +38,7 @@ var daySelection;
 var userLatitude;
 var userLongitude;
 var sunTimes;
+var weatherForecast;
 
 ///////////////////////////////////////////////////////////////////////////////
 // DOM ELEMENTS SELECTION /////////////////////////////////////////////////////
@@ -132,26 +133,26 @@ const metricButtons = [
 const degreeSymbols = document.querySelectorAll(".degrees");
 const speedSymbols = document.querySelectorAll(".speeds");
 
-const temperatureSlider = document.getElementById("temperature");
+export const temperatureSlider = document.getElementById("temperature");
 const temperatureValue = document.getElementById("temperature_value");
 const temperatureLimit = document.getElementById("temp_limit");
 
-const dewPointSlider = document.getElementById("dew_point");
+export const dewPointSlider = document.getElementById("dew_point");
 const dewPointValue = document.getElementById("dewpoint_value");
 const dewPointLimit = document.getElementById("dewpoint_limit");
 
-const cloudCoverSlider = document.getElementById("cloud_cover");
+export const cloudCoverSlider = document.getElementById("cloud_cover");
 const cloudCoverValue = document.getElementById("cloudcover_value");
 
-const uvSlider = document.getElementById("uv");
+export const uvSlider = document.getElementById("uv");
 const uvValue = document.getElementById("uv_value");
 const uvLimit = document.getElementById("uv_limit");
 
-const precipitationIntensitySlider =
+export const precipitationIntensitySlider =
   document.getElementById("precip_intensity");
 const precipitationIntensityValue = document.getElementById("precip_value");
 
-const windSpeedSlider = document.getElementById("wind_speed");
+export const windSpeedSlider = document.getElementById("wind_speed");
 const windSpeedValue = document.getElementById("windspeed_value");
 const windSpeedLimit = document.getElementById("windpseed_limit");
 
@@ -210,21 +211,39 @@ metricButtons.forEach((metricButton) => {
 
 document.getElementById("choice-today").addEventListener("click", function () {
   daySelection = 0;
-  today(currentTime, absTimeButtons, solarTimeButtons, sunTimes);
+  today(
+    currentTime,
+    absTimeButtons,
+    solarTimeButtons,
+    sunTimes,
+    weatherForecast.forecastGrid
+  );
   updateSolarTimes(sunTimes, 0);
 });
 document
   .getElementById("choice-tomorrow")
   .addEventListener("click", function () {
     daySelection = 1;
-    tomorrow(currentTime, absTimeButtons, solarTimeButtons, sunTimes);
+    tomorrow(
+      currentTime,
+      absTimeButtons,
+      solarTimeButtons,
+      sunTimes,
+      weatherForecast.forecastGrid
+    );
     updateSolarTimes(sunTimes, 1);
   });
 document
   .getElementById("choice-dayafter")
   .addEventListener("click", function () {
     daySelection = 2;
-    dayAfter(currentTime, absTimeButtons, solarTimeButtons, sunTimes);
+    dayAfter(
+      currentTime,
+      absTimeButtons,
+      solarTimeButtons,
+      sunTimes,
+      weatherForecast.forecastGrid
+    );
     updateSolarTimes(sunTimes, 2);
   });
 
@@ -240,21 +259,33 @@ document
   .getElementById("choice-absolute")
   .addEventListener("click", function () {
     absoluteTimes();
-    updatePreferredTimeAndScore(absTimeButtons, solarTimeButtons);
+    updatePreferredTimeAndScore(
+      absTimeButtons,
+      solarTimeButtons,
+      weatherForecast.forecastGrid
+    );
   });
 
 document
   .getElementById("choice-relative")
   .addEventListener("click", function () {
     relativeTimes();
-    updatePreferredTimeAndScore(absTimeButtons, solarTimeButtons);
+    updatePreferredTimeAndScore(
+      absTimeButtons,
+      solarTimeButtons,
+      weatherForecast.forecastGrid
+    );
   });
 
 absTimeButtons.forEach((timeButton) => {
   timeButton.addEventListener("click", function () {
     defaultWeekdayTimes.checked = false;
     defaultWeekendTimes.checked = false;
-    updatePreferredTimeAndScore(absTimeButtons, solarTimeButtons);
+    updatePreferredTimeAndScore(
+      absTimeButtons,
+      solarTimeButtons,
+      weatherForecast.forecastGrid
+    );
   });
 });
 
@@ -262,20 +293,39 @@ solarTimeButtons.forEach((timeButton) => {
   timeButton.addEventListener("click", function () {
     defaultWeekdayTimes.checked = false;
     defaultWeekendTimes.checked = false;
-    updatePreferredTimeAndScore(absTimeButtons, solarTimeButtons);
+    updatePreferredTimeAndScore(
+      absTimeButtons,
+      solarTimeButtons,
+      weatherForecast.forecastGrid
+    );
   });
 });
 
 temperatureSlider.addEventListener("input", function () {
   displayTemp(temperatureValue, temperatureSlider, temperatureLimit, isMetric);
+  updatePreferredTimeAndScore(
+    absTimeButtons,
+    solarTimeButtons,
+    weatherForecast.forecastGrid
+  );
 });
 
 dewPointSlider.addEventListener("input", function () {
   displayDewPoint(dewPointValue, dewPointSlider, dewPointLimit, isMetric);
+  updatePreferredTimeAndScore(
+    absTimeButtons,
+    solarTimeButtons,
+    weatherForecast.forecastGrid
+  );
 });
 
 cloudCoverSlider.addEventListener("input", function () {
   cloudCoverValue.innerHTML = printCloudCover(cloudCoverSlider.value);
+  updatePreferredTimeAndScore(
+    absTimeButtons,
+    solarTimeButtons,
+    weatherForecast.forecastGrid
+  );
 });
 
 uvSlider.addEventListener("input", function () {
@@ -285,16 +335,31 @@ uvSlider.addEventListener("input", function () {
   } else {
     uvLimit.innerText = "";
   }
+  updatePreferredTimeAndScore(
+    absTimeButtons,
+    solarTimeButtons,
+    weatherForecast.forecastGrid
+  );
 });
 
 precipitationIntensitySlider.addEventListener("input", function () {
   precipitationIntensityValue.innerText = printPrecipitationIntensity(
     precipitationIntensitySlider.value
   );
+  updatePreferredTimeAndScore(
+    absTimeButtons,
+    solarTimeButtons,
+    weatherForecast.forecastGrid
+  );
 });
 
 windSpeedSlider.addEventListener("input", function () {
   displayWindSpeed(windSpeedValue, windSpeedSlider, windSpeedLimit, isMetric);
+  updatePreferredTimeAndScore(
+    absTimeButtons,
+    solarTimeButtons,
+    weatherForecast.forecastGrid
+  );
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -305,11 +370,11 @@ var currentHour = getTime(currentTime);
 if (currentHour <= 18) {
   document.getElementById("choice-today").checked = true;
   daySelection = 0;
-  today(currentTime, absTimeButtons, solarTimeButtons, sunTimes);
+  today(currentTime, absTimeButtons, solarTimeButtons, sunTimes, null);
 } else {
   document.getElementById("choice-tomorrow").checked = true;
   daySelection = 1;
-  tomorrow(currentTime, absTimeButtons, solarTimeButtons, sunTimes);
+  tomorrow(currentTime, absTimeButtons, solarTimeButtons, sunTimes, null);
 }
 
 document.getElementById("day-after-text").innerText =
@@ -414,17 +479,14 @@ function getSolarTimes(lat, long) {
 }
 
 function getCurrentWeather(lat, long) {
-  var units = isMetric
-    ? ""
-    : "&temperature_unit=fahrenheit&wind_speed_unit=mph";
-  var url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current=temperature_2m,apparent_temperature,is_day&hourly=temperature_2m,dew_point_2m,precipitation_probability,precipitation,weather_code,cloud_cover,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min${units}&timezone=auto&forecast_days=3`;
+  //   var units = isMetric
+  var url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current=temperature_2m,apparent_temperature,is_day&hourly=temperature_2m,dew_point_2m,precipitation_probability,precipitation,weather_code,cloud_cover,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=3`;
   fetch(url)
     .then(function (response) {
       return response.json();
     })
     .then(function (data) {
       var localConditions = new CurrentConditions(
-        data.current_units.temperature_2m,
         data.current.temperature_2m,
         data.current.apparent_temperature,
         data.current.is_day,
@@ -433,8 +495,7 @@ function getCurrentWeather(lat, long) {
         ]
       );
 
-      var forecastConditions = new ForecastData(
-        data.hourly_units.temperature_2m,
+      weatherForecast = new ForecastData(
         data.daily.temperature_2m_max,
         data.daily.temperature_2m_min,
         data.hourly.temperature_2m,
@@ -447,31 +508,31 @@ function getCurrentWeather(lat, long) {
 
       document.getElementById(
         "today-hi-lo"
-      ).innerHTML = `Hi: ${forecastConditions.dailyHighs[0].toFixed(0)}${
-        forecastConditions.units
-      } Lo: ${forecastConditions.dailyLows[0].toFixed(0)}${
-        forecastConditions.units
-      }`;
+      ).innerHTML = `Hi: ${weatherForecast.dailyHighs[0].toFixed(0)}${
+        weatherForecast.units
+      } Lo: ${weatherForecast.dailyLows[0].toFixed(0)}${weatherForecast.units}`;
       document.getElementById(
         "tomorrow-hi-lo"
-      ).innerHTML = `Hi: ${forecastConditions.dailyHighs[1].toFixed(0)}${
-        forecastConditions.units
-      } Lo: ${forecastConditions.dailyLows[1].toFixed(0)}${
-        forecastConditions.units
-      }`;
+      ).innerHTML = `Hi: ${weatherForecast.dailyHighs[1].toFixed(0)}${
+        weatherForecast.units
+      } Lo: ${weatherForecast.dailyLows[1].toFixed(0)}${weatherForecast.units}`;
       document.getElementById(
         "day-after-hi-lo"
-      ).innerHTML = `Hi: ${forecastConditions.dailyHighs[2].toFixed(0)}${
-        forecastConditions.units
-      } Lo: ${forecastConditions.dailyLows[2].toFixed(0)}${
-        forecastConditions.units
-      }`;
+      ).innerHTML = `Hi: ${weatherForecast.dailyHighs[2].toFixed(0)}${
+        weatherForecast.units
+      } Lo: ${weatherForecast.dailyLows[2].toFixed(0)}${weatherForecast.units}`;
 
       currentConditionsText.innerHTML = localConditions.displayHTML;
+      console.log("Attempting to update preferred time and score...");
+      updatePreferredTimeAndScore(
+        absTimeButtons,
+        solarTimeButtons,
+        weatherForecast.forecastGrid
+      );
     })
     .catch(function (error) {
       console.log(error);
     });
 }
 
-export { processUserLocation };
+export { currentHour, processUserLocation };

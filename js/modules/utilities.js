@@ -1,11 +1,21 @@
 "use strict";
 
-import { processUserLocation } from "../custom_script.js";
+import {
+  currentHour,
+  processUserLocation,
+  temperatureSlider,
+  dewPointSlider,
+  cloudCoverSlider,
+  uvSlider,
+  precipitationIntensitySlider,
+  windSpeedSlider,
+} from "../custom_script.js";
+import { findBestTime } from "./preferred_time.js";
 
 // MODULE VARIABLES
-// var currentTime = new Date();
 var daySelection;
 
+let bestTimeSpace = document.getElementById("best-time");
 let preferenceText = document.getElementById("preferred-time-text");
 let preferredScore = document.getElementById("best_preferred_score");
 
@@ -141,7 +151,13 @@ function getDayAfterTomorrow(currentTime) {
 /**
  * Updates the page once the user selects the 'Today' button.
  */
-function today(currentTime, absButtons, solButtons, solarDataObject) {
+function today(
+  currentTime,
+  absButtons,
+  solButtons,
+  solarDataObject,
+  forecastConditions
+) {
   daySelection = 0;
   document.getElementById("target_day").innerText = "later today";
   setTodaysButtons(
@@ -151,29 +167,44 @@ function today(currentTime, absButtons, solButtons, solarDataObject) {
     solarDataObject
   );
   toggleDefaultTimes(currentTime, daySelection, solarDataObject);
+  updatePreferredTimeAndScore(absButtons, solButtons, forecastConditions);
 }
 
 /**
  * Updates the page once the user selects the 'Tomorrow' button.
  */
-function tomorrow(currentTime, absButtons, solButtons, solarDataObject) {
+function tomorrow(
+  currentTime,
+  absButtons,
+  solButtons,
+  solarDataObject,
+  forecastConditions
+) {
   daySelection = 1;
   document.getElementById("target_day").innerText = "tomorrow";
   hideTimesAlert();
   setFutureDaysButtons(absButtons, solButtons);
   toggleDefaultTimes(currentTime, daySelection, solarDataObject);
+  updatePreferredTimeAndScore(absButtons, solButtons, forecastConditions);
 }
 
 /**
  * Updates the page once the user selects the day-after-tomorrow button.
  */
-function dayAfter(currentTime, absButtons, solButtons, solarDataObject) {
+function dayAfter(
+  currentTime,
+  absButtons,
+  solButtons,
+  solarDataObject,
+  forecastConditions
+) {
   daySelection = 2;
   document.getElementById("target_day").innerText =
     getDayAfterTomorrow(currentTime);
   hideTimesAlert();
   setFutureDaysButtons(absButtons, solButtons);
   toggleDefaultTimes(currentTime, daySelection, solarDataObject);
+  updatePreferredTimeAndScore(absButtons, solButtons, forecastConditions);
 }
 
 /**
@@ -250,7 +281,6 @@ function toggleDefaultWeekdayTimes(currentTime, daySelection, solarDataObject) {
   });
   solarTimes.forEach((element) => {
     if (solarDataObject == null) {
-      console.log("No solar data; no location entered.");
       element.checked = element.classList.contains("weekday");
     } else {
       element.checked =
@@ -394,17 +424,70 @@ function getArrayIndex(hour, day) {
   return day * 24 + hour;
 }
 
+function integerToTimeText(n, daySelection) {
+  n -= 24 * daySelection;
+  if (n == 0) {
+    return "12 am";
+  } else if (n < 12) {
+    return `${n} am`;
+  } else if (n == 12) {
+    return "12 pm";
+  } else {
+    return `${n - 12} pm`;
+  }
+}
+
 /**
  * Updates the best time (and score) within the user's checked times.
  */
-function updatePreferredTimeAndScore(absButtons, solButtons) {
+function updatePreferredTimeAndScore(
+  absButtons,
+  solButtons,
+  forecastConditions
+) {
   if (checkIfNoTimes(absButtons, solButtons)) {
     preferenceText.innerHTML =
       "<em>Select times below to see your best preferred time.</em>";
     preferredScore.innerText = "";
+  } else if (forecastConditions == null) {
+    return;
   } else {
-    preferenceText.innerHTML = `Within your preferred times, the best time is <span id="best_preferred_time"><strong>5 pm</strong></span>.`;
+    let sliderValues = [
+      temperatureSlider.value,
+      dewPointSlider.value,
+      cloudCoverSlider.value,
+      uvSlider.value,
+      precipitationIntensitySlider.value,
+      windSpeedSlider.value,
+    ];
+    let userHours = new Array();
+    if (document.getElementById("choice-absolute").checked) {
+      const buttons = document.querySelectorAll(".clock");
+      const checkedButtons = Array.from(buttons).filter(
+        (button) => button.checked
+      );
+      checkedButtons.forEach((button) => {
+        userHours.push(absTimeButtonIds.indexOf(button.id) + daySelection * 24);
+      });
+    } else {
+      console.log("Will implement solar preferences shortly.");
+    }
     // (Re)calcute score here
+    // console.log(forecastConditions);
+    let [overallBest, userBest] = findBestTime(
+      sliderValues,
+      [2.5, 2, 1.5, 1, 3, 1],
+      forecastConditions,
+      daySelection,
+      currentHour,
+      userHours
+    );
+
+    bestTimeSpace.innerText = integerToTimeText(overallBest, daySelection);
+    preferenceText.innerHTML = `Within your preferred times, the best time is <span id="best_preferred_time"><strong>${integerToTimeText(
+      userBest,
+      daySelection
+    )}</strong></span>.`;
   }
 }
 

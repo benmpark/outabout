@@ -1,5 +1,6 @@
 body {
-  background-color: white;
+  /*background-color: white;*/
+  background-image: linear-gradient(#ccc, white);
   font-family: "Jost", sans-serif;
   margin-top: 1rem;
   margin-bottom: 3rem;
@@ -43,9 +44,9 @@ footer {
   line-height: 0.9em;
 }
 
-.light-shade {
+/* .light-shade {
   background-color: #eee;
-}
+} */
 
 .daily-min-max,
 .solar-times {
@@ -65,5 +66,5 @@ footer {
 
 .btn-time:hover {
   color: #000;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.3);
 }
