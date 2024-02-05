@@ -24,16 +24,27 @@ Probably at about version 0.9 or so. :-) I'm wrapping up the initial version of 
 ## Contents
 
 ├── css
+
 │ ├── custom.css
+
 ├── img
+
 ├── js
+
 │ ├── modules
+
 │ │ ├── preferred_time.js
+
 │ │ ├── solar_data.js
+
 │ │ ├── utilities.js
+
 │ │ ├── weather_data.js
+
 │ ├── custom_script.js
+
 ├── index.html
+
 ├── README.md
 
 ## License
