@@ -22,8 +22,7 @@ Probably at about version 0.9 or so. :-) I'm wrapping up the initial version of 
 - Time zone support (detect via browser, but also update based on location)
 
 ## Contents
-
-├── css
+```├── css
 
 │ ├── custom.css
 
@@ -46,6 +45,7 @@ Probably at about version 0.9 or so. :-) I'm wrapping up the initial version of 
 ├── index.html
 
 ├── README.md
+```
 
 ## License
 
