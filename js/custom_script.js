@@ -5,12 +5,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 import {
+  daySelection,
   automaticLocation,
   getTime,
   getDayAfterTomorrow,
-  today,
-  tomorrow,
-  dayAfter,
+  applyDay,
   absoluteTimes,
   relativeTimes,
   setTodaysButtons,
@@ -33,20 +32,19 @@ import SolarData from "./modules/solar_data.js";
 ///////////////////////////////////////////////////////////////////////////////
 // CONSTANTS & CONFIGURATION //////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-var currentTime = new Date();
-var daySelection;
-var userLatitude;
-var userLongitude;
-var sunTimes;
-var weatherForecast;
+export let currentTime = new Date();
+let userLatitude;
+let userLongitude;
+export let sunTimes;
+export let weatherForecast;
 
 ///////////////////////////////////////////////////////////////////////////////
 // DOM ELEMENTS SELECTION /////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+const dayButtons = document.querySelectorAll(".day-button");
 const locationForm = document.getElementById("location-form");
 const locationField = document.getElementById("location");
-// const submitButton = document.getElementById("location_submit");
 const autoLocationButton = document.getElementById("auto-location");
 
 const locationName = document.getElementById("found-location");
@@ -55,35 +53,8 @@ const locationCoordinates = document.getElementById("coordinates");
 const currentConditionsText = document.getElementById("current-conditions");
 // const forecastText = document.getElementById("forecast");
 
-const absTimeButtons = document.querySelectorAll(".clock");
-// const absTimeButtonIds = [
-//   "12am",
-//   "1am",
-//   "2am",
-//   "3am",
-//   "4am",
-//   "5am",
-//   "6am",
-//   "7am",
-//   "8am",
-//   "9am",
-//   "10am",
-//   "11am",
-//   "12pm",
-//   "1pm",
-//   "2pm",
-//   "3pm",
-//   "4pm",
-//   "5pm",
-//   "6pm",
-//   "7pm",
-//   "8pm",
-//   "9pm",
-//   "10pm",
-//   "11pm",
-// ];
-
-const solarTimeButtons = document.querySelectorAll(".sun");
+export const absTimeButtons = document.querySelectorAll(".clock");
+export const solarTimeButtons = document.querySelectorAll(".sun");
 const solarTimeButtonIds = [
   "night_am",
   "civil_am",
@@ -94,16 +65,6 @@ const solarTimeButtonIds = [
   "civil_pm",
   "night_pm",
 ];
-// const solarTimeInsertIds = [
-//   "pre-dawn-time",
-//   "dawn-time",
-//   "am-golden-time",
-//   "morning-time",
-//   "afternoon-time",
-//   "pm-golden-time",
-//   "dusk-time",
-//   "post-dusk-time",
-// ];
 
 // Weather Condition Sliders
 var popoverTriggerList = [].slice.call(
@@ -159,6 +120,12 @@ const windSpeedLimit = document.getElementById("windpseed_limit");
 ///////////////////////////////////////////////////////////////////////////////
 // EVENT HANDLERS /////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+dayButtons.forEach((dayButton) => {
+  dayButton.addEventListener("click", function (event) {
+    applyDay(event.target.id);
+  });
+});
+
 locationForm.addEventListener("submit", function (event) {
   handleFormSubmit(event);
 });
@@ -209,83 +176,33 @@ metricButtons.forEach((metricButton) => {
   });
 });
 
-document.getElementById("choice-today").addEventListener("click", function () {
-  daySelection = 0;
-  today(
-    currentTime,
-    absTimeButtons,
-    solarTimeButtons,
-    sunTimes,
-    weatherForecast.forecastGrid
-  );
-  updateSolarTimes(sunTimes, 0);
-});
-document
-  .getElementById("choice-tomorrow")
-  .addEventListener("click", function () {
-    daySelection = 1;
-    tomorrow(
-      currentTime,
-      absTimeButtons,
-      solarTimeButtons,
-      sunTimes,
-      weatherForecast.forecastGrid
-    );
-    updateSolarTimes(sunTimes, 1);
-  });
-document
-  .getElementById("choice-dayafter")
-  .addEventListener("click", function () {
-    daySelection = 2;
-    dayAfter(
-      currentTime,
-      absTimeButtons,
-      solarTimeButtons,
-      sunTimes,
-      weatherForecast.forecastGrid
-    );
-    updateSolarTimes(sunTimes, 2);
-  });
-
 defaultWeekdayTimes.addEventListener("click", function () {
-  toggleDefaultWeekdayTimes(currentTime, daySelection, sunTimes);
+  toggleDefaultWeekdayTimes();
 });
 
 defaultWeekendTimes.addEventListener("click", function () {
-  toggleDefaultWeekendTimes(currentTime, daySelection, sunTimes);
+  toggleDefaultWeekendTimes();
 });
 
 document
   .getElementById("choice-absolute")
   .addEventListener("click", function () {
     absoluteTimes();
-    updatePreferredTimeAndScore(
-      absTimeButtons,
-      solarTimeButtons,
-      weatherForecast.forecastGrid
-    );
+    updatePreferredTimeAndScore();
   });
 
 document
   .getElementById("choice-relative")
   .addEventListener("click", function () {
     relativeTimes();
-    updatePreferredTimeAndScore(
-      absTimeButtons,
-      solarTimeButtons,
-      weatherForecast.forecastGrid
-    );
+    updatePreferredTimeAndScore();
   });
 
 absTimeButtons.forEach((timeButton) => {
   timeButton.addEventListener("click", function () {
     defaultWeekdayTimes.checked = false;
     defaultWeekendTimes.checked = false;
-    updatePreferredTimeAndScore(
-      absTimeButtons,
-      solarTimeButtons,
-      weatherForecast.forecastGrid
-    );
+    updatePreferredTimeAndScore();
   });
 });
 
@@ -293,39 +210,23 @@ solarTimeButtons.forEach((timeButton) => {
   timeButton.addEventListener("click", function () {
     defaultWeekdayTimes.checked = false;
     defaultWeekendTimes.checked = false;
-    updatePreferredTimeAndScore(
-      absTimeButtons,
-      solarTimeButtons,
-      weatherForecast.forecastGrid
-    );
+    updatePreferredTimeAndScore();
   });
 });
 
 temperatureSlider.addEventListener("input", function () {
   displayTemp(temperatureValue, temperatureSlider, temperatureLimit, isMetric);
-  updatePreferredTimeAndScore(
-    absTimeButtons,
-    solarTimeButtons,
-    weatherForecast.forecastGrid
-  );
+  updatePreferredTimeAndScore();
 });
 
 dewPointSlider.addEventListener("input", function () {
   displayDewPoint(dewPointValue, dewPointSlider, dewPointLimit, isMetric);
-  updatePreferredTimeAndScore(
-    absTimeButtons,
-    solarTimeButtons,
-    weatherForecast.forecastGrid
-  );
+  updatePreferredTimeAndScore();
 });
 
 cloudCoverSlider.addEventListener("input", function () {
   cloudCoverValue.innerHTML = printCloudCover(cloudCoverSlider.value);
-  updatePreferredTimeAndScore(
-    absTimeButtons,
-    solarTimeButtons,
-    weatherForecast.forecastGrid
-  );
+  updatePreferredTimeAndScore();
 });
 
 uvSlider.addEventListener("input", function () {
@@ -335,31 +236,19 @@ uvSlider.addEventListener("input", function () {
   } else {
     uvLimit.innerText = "";
   }
-  updatePreferredTimeAndScore(
-    absTimeButtons,
-    solarTimeButtons,
-    weatherForecast.forecastGrid
-  );
+  updatePreferredTimeAndScore();
 });
 
 precipitationIntensitySlider.addEventListener("input", function () {
   precipitationIntensityValue.innerText = printPrecipitationIntensity(
     precipitationIntensitySlider.value
   );
-  updatePreferredTimeAndScore(
-    absTimeButtons,
-    solarTimeButtons,
-    weatherForecast.forecastGrid
-  );
+  updatePreferredTimeAndScore();
 });
 
 windSpeedSlider.addEventListener("input", function () {
   displayWindSpeed(windSpeedValue, windSpeedSlider, windSpeedLimit, isMetric);
-  updatePreferredTimeAndScore(
-    absTimeButtons,
-    solarTimeButtons,
-    weatherForecast.forecastGrid
-  );
+  updatePreferredTimeAndScore();
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -369,12 +258,10 @@ var currentHour = getTime(currentTime);
 
 if (currentHour <= 18) {
   document.getElementById("choice-today").checked = true;
-  daySelection = 0;
-  today(currentTime, absTimeButtons, solarTimeButtons, sunTimes, null);
+  applyDay("choice-today");
 } else {
   document.getElementById("choice-tomorrow").checked = true;
-  daySelection = 1;
-  tomorrow(currentTime, absTimeButtons, solarTimeButtons, sunTimes, null);
+  applyDay("choice-tomorrow");
 }
 
 document.getElementById("day-after-text").innerText =
@@ -427,13 +314,13 @@ function processUserLocation(entry) {
     )}&format=geocodejson`;
   }
 
-  console.log(url); // remove later
+  //   console.log(url); // remove later
   fetch(url)
     .then(function (response) {
       return response.json();
     })
     .then(function (data) {
-      // These next two lines are just for developing
+      // These next two lines are (maybe?) just for developing
       locationName.innerText = `${data.features[0].properties.geocoding.label}`;
       userLatitude = data.features[0].geometry.coordinates[1];
       userLongitude = data.features[0].geometry.coordinates[0];
@@ -463,14 +350,9 @@ function getSolarTimes(lat, long) {
     })
     .then(function (data) {
       sunTimes = new SolarData(data.results);
-      updateSolarTimes(sunTimes, daySelection);
+      updateSolarTimes();
       if (daySelection == 0) {
-        setTodaysButtons(
-          currentHour,
-          absTimeButtons,
-          solarTimeButtons,
-          sunTimes
-        );
+        setTodaysButtons(currentHour);
       }
     })
     .catch(function (error) {
@@ -524,11 +406,7 @@ function getCurrentWeather(lat, long) {
 
       currentConditionsText.innerHTML = localConditions.displayHTML;
       console.log("Attempting to update preferred time and score...");
-      updatePreferredTimeAndScore(
-        absTimeButtons,
-        solarTimeButtons,
-        weatherForecast.forecastGrid
-      );
+      updatePreferredTimeAndScore();
     })
     .catch(function (error) {
       console.log(error);

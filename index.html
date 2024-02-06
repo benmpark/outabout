@@ -40,20 +40,20 @@
           role="group"
           aria-label="Forecast Range Buttons"
         >
-          <input type="radio" class="btn-check" name="day_button" id="choice-today" autocomplete="off">
+          <input type="radio" class="btn-check day-button" name="day_button" id="choice-today" autocomplete="off">
           <label class="btn btn-outline-primary" for="choice-today">Today<br><span class="daily-min-max" id="today-hi-lo"></span></label>
 
-          <input type="radio" class="btn-check" name="day_button" id="choice-tomorrow" autocomplete="off">
+          <input type="radio" class="btn-check day-button" name="day_button" id="choice-tomorrow" autocomplete="off">
           <label class="btn btn-outline-primary" for="choice-tomorrow">Tomorrow<br><span class="daily-min-max" id="tomorrow-hi-lo"></span></label>
 
-          <input type="radio" class="btn-check" name="day_button" id="choice-dayafter" autocomplete="off">
+          <input type="radio" class="btn-check day-button" name="day_button" id="choice-dayafter" autocomplete="off">
           <label class="btn btn-outline-primary" for="choice-dayafter"><span id="day-after-text">The Day After</span><br><span class="daily-min-max" id="day-after-hi-lo"></span></label>
         </div>
 
         <div class="border border-primary mx-0 my-0 py-2 light-shade">
           <div class="row main_info mx-2">
             <!--The best time to get outside <span id="target_day">later today</span> is <span id="best_time"><strong>7 am</strong></span>.-->
-            <div class="col-xl-7 col-md-8 col-sm-9 col-12"><span id="best-time-text">The best time to get outside <span id="target_day">later today</span> is <strong><span id="best-time">???</span></strong></span></div>
+            <div class="col-xl-7 col-md-8 col-sm-9 col-12"><span id="best-time-text">The best time to get outside <span id="target_day">later today</span> is <strong><span id="best-time">???</span></strong>.</span></div>
             <div class="col-xl-5 col-md-4 col-sm-3 col-12">Score: <span id="best_score"></span></div>
           </div>
           <div class="row main_info mt-2 mx-2" id="preferred_row">
@@ -107,7 +107,7 @@
                   <button type="button" class="btn btn-outline-dark" id="default-weekend">Set Default Weekend</button>
                 </div>
               </div>
-              <div class="col-lg-8 col-md-6 col-12" id="times-alert">
+              <div class="col-lg-8 col-md-6 col-12">
                 <span id="times-alert-space"></span>
               </div>
             </div>

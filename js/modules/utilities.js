@@ -1,6 +1,11 @@
 "use strict";
 
 import {
+  currentTime,
+  sunTimes,
+  weatherForecast,
+  absTimeButtons,
+  solarTimeButtons,
   currentHour,
   processUserLocation,
   temperatureSlider,
@@ -13,7 +18,7 @@ import {
 import { findBestTime } from "./preferred_time.js";
 
 // MODULE VARIABLES
-var daySelection;
+let daySelection;
 
 let bestTimeSpace = document.getElementById("best-time");
 let preferenceText = document.getElementById("preferred-time-text");
@@ -128,83 +133,66 @@ function dayToString(day) {
  * Gets the number of hours past the midnight hour.
  * @returns {number} The hour portion of the 24-hour time
  */
-function getTime(currentTime) {
+function getTime() {
   return currentTime.getHours();
 }
-
-// /**
-//  * Calculates the day of the week. Used for adjusting default times.
-//  * @returns {number} The day of the week (e.g., 1 for Monday)
-//  */
-// function whatDay(currentTime, daySelection) {
-//   return (currentTime.getDay() + daySelection) % 7;
-// }
 
 /**
  * Figures out which day of the week the day after tomorrow is.
  * @returns {string} The day after tomorrow as a string.
  */
-function getDayAfterTomorrow(currentTime) {
+function getDayAfterTomorrow() {
   return dayToString((currentTime.getDay() + 2) % 7);
+}
+
+function applyDay(dayTarget) {
+  if (dayTarget == "choice-today") {
+    daySelection = 0;
+    document.getElementById("target_day").innerText = "later today";
+    setTodaysButtons(getTime());
+    showTimesAlert();
+  } else {
+    daySelection = dayTarget == "choice-tomorrow" ? 1 : 2;
+    document.getElementById("target_day").innerText =
+      dayTarget == "choice-tomorrow" ? "tomorrow" : getDayAfterTomorrow();
+    hideTimesAlert();
+    setFutureDaysButtons();
+    updateSolarTimes();
+  }
+  toggleDefaultTimes();
+  updatePreferredTimeAndScore();
 }
 
 /**
  * Updates the page once the user selects the 'Today' button.
  */
-function today(
-  currentTime,
-  absButtons,
-  solButtons,
-  solarDataObject,
-  forecastConditions
-) {
-  daySelection = 0;
+function today() {
   document.getElementById("target_day").innerText = "later today";
-  setTodaysButtons(
-    currentTime.getHours(),
-    absButtons,
-    solButtons,
-    solarDataObject
-  );
-  toggleDefaultTimes(currentTime, daySelection, solarDataObject);
-  updatePreferredTimeAndScore(absButtons, solButtons, forecastConditions);
+  setTodaysButtons(getTime());
+  toggleDefaultTimes();
+  updatePreferredTimeAndScore();
 }
 
 /**
  * Updates the page once the user selects the 'Tomorrow' button.
  */
-function tomorrow(
-  currentTime,
-  absButtons,
-  solButtons,
-  solarDataObject,
-  forecastConditions
-) {
-  daySelection = 1;
+function tomorrow() {
   document.getElementById("target_day").innerText = "tomorrow";
   hideTimesAlert();
-  setFutureDaysButtons(absButtons, solButtons);
-  toggleDefaultTimes(currentTime, daySelection, solarDataObject);
-  updatePreferredTimeAndScore(absButtons, solButtons, forecastConditions);
+  setFutureDaysButtons();
+  toggleDefaultTimes();
+  updatePreferredTimeAndScore();
 }
 
 /**
  * Updates the page once the user selects the day-after-tomorrow button.
  */
-function dayAfter(
-  currentTime,
-  absButtons,
-  solButtons,
-  solarDataObject,
-  forecastConditions
-) {
-  daySelection = 2;
-  document.getElementById("target_day").innerText =
-    getDayAfterTomorrow(currentTime);
+function dayAfter() {
+  document.getElementById("target_day").innerText = getDayAfterTomorrow();
   hideTimesAlert();
-  setFutureDaysButtons(absButtons, solButtons);
-  toggleDefaultTimes(currentTime, daySelection, solarDataObject);
-  updatePreferredTimeAndScore(absButtons, solButtons, forecastConditions);
+  setFutureDaysButtons();
+  toggleDefaultTimes();
+  updatePreferredTimeAndScore();
 }
 
 /**
@@ -227,27 +215,27 @@ function relativeTimes() {
  * Sets the default times (weekday or weekend) once 'today' is selected.
  * @param {number} hour - The current hour of the day
  */
-function setTodaysButtons(hour, absButtons, solButtons, solarDataObject) {
+function setTodaysButtons(hour) {
   let s = 0;
   for (let i = 0; i < hour; i++) {
-    absButtons[i].setAttribute("disabled", "");
-    absButtons[i].checked = false;
+    absTimeButtons[i].setAttribute("disabled", "");
+    absTimeButtons[i].checked = false;
   }
 
   for (let i = hour; i < 24; i++) {
-    absButtons[i].removeAttribute("disabled", "");
+    absTimeButtons[i].removeAttribute("disabled", "");
   }
 
-  if (solarDataObject == null) {
+  if (sunTimes == null) {
     return;
   }
 
   for (let s = 0; s < 8; s++) {
     if (solarDataObject.today.eventHourArray[s + 1] < hour) {
-      solButtons[s].setAttribute("disabled", "");
-      solButtons[s].checked = false;
+      solarTimeButtons[s].setAttribute("disabled", "");
+      solarTimeButtons[s].checked = false;
     } else {
-      solButtons[s].removeAttribute("disabled", "");
+      solarTimeButtons[s].removeAttribute("disabled", "");
     }
   }
 }
@@ -255,90 +243,88 @@ function setTodaysButtons(hour, absButtons, solButtons, solarDataObject) {
 /**
  * Sets the default times (weekday or weekend) once a future day is selected.
  */
-function setFutureDaysButtons(absButtons, solButtons) {
+function setFutureDaysButtons() {
   for (let i = 0; i < 8; i++) {
-    absButtons[i].removeAttribute("disabled", "");
-    solButtons[i].removeAttribute("disabled", "");
+    absTimeButtons[i].removeAttribute("disabled", "");
+    solarTimeButtons[i].removeAttribute("disabled", "");
   }
   for (let i = 8; i < 24; i++) {
-    absButtons[i].removeAttribute("disabled", "");
+    absTimeButtons[i].removeAttribute("disabled", "");
   }
 }
 
 /**
  * Checks the default times for a weekday.
  */
-function toggleDefaultWeekdayTimes(currentTime, daySelection, solarDataObject) {
+function toggleDefaultWeekdayTimes() {
   let clockTimes = document.querySelectorAll(".clock");
   let solarTimes = document.querySelectorAll(".sun");
   clockTimes.forEach((element) => {
     element.checked =
       element.classList.contains("weekday") &&
-      (daySelection ||
-        absTimeButtonIds.indexOf(element.id) >= getTime(currentTime))
+      (daySelection || absTimeButtonIds.indexOf(element.id) >= getTime())
         ? true
         : false;
   });
   solarTimes.forEach((element) => {
-    if (solarDataObject == null) {
+    if (sunTimes == null) {
       element.checked = element.classList.contains("weekday");
     } else {
       element.checked =
         element.classList.contains("weekday") &&
         (daySelection ||
-          solarDataObject.allEventHours[daySelection][
+          sunTimes.allEventHours[daySelection][
             solarTimeButtonIds.indexOf(element.id) + 1
-          ] >= getTime(currentTime))
+          ] >= getTime())
           ? true
           : false;
     }
   });
-  showTimesAlert(currentTime, true);
+  showTimesAlert(true);
 }
 
 /**
  * Checks the default times for a weekend.
  */
-function toggleDefaultWeekendTimes(currentTime, daySelection, solarDataObject) {
+function toggleDefaultWeekendTimes() {
   let clockTimes = document.querySelectorAll(".clock");
   let solarTimes = document.querySelectorAll(".sun");
   clockTimes.forEach((element) => {
     element.checked =
       element.classList.contains("weekend") &&
-      (daySelection ||
-        absTimeButtonIds.indexOf(element.id) >= getTime(currentTime))
+      (daySelection || absTimeButtonIds.indexOf(element.id) >= getTime())
         ? true
         : false;
   });
   solarTimes.forEach((element) => {
-    if (solarDataObject == null) {
+    if (sunTimes == null) {
       console.log("No solar data; no location entered.");
       element.checked = element.classList.contains("weekend");
     } else {
       element.checked =
         element.classList.contains("weekend") &&
         (daySelection ||
-          solarDataObject.allEventHours[daySelection][
+          sunTimes.allEventHours[daySelection][
             solarTimeButtonIds.indexOf(element.id) + 1
-          ] >= getTime(currentTime))
+          ] >= getTime())
           ? true
           : false;
     }
   });
-  showTimesAlert(currentTime, false);
+  showTimesAlert(false);
 }
 
 /**
  * Toggles the default times for the currently selected day.
  */
-function toggleDefaultTimes(currentTime, daySelection, solarDataObject) {
+function toggleDefaultTimes() {
   switch ((currentTime.getDay() + daySelection) % 7) {
     case 0:
     case 6:
-      toggleDefaultWeekendTimes(currentTime, daySelection, solarDataObject);
+      toggleDefaultWeekendTimes();
       break;
     default:
-      toggleDefaultWeekdayTimes(currentTime, daySelection, solarDataObject);
+      toggleDefaultWeekdayTimes();
   }
 }
 
@@ -346,15 +332,16 @@ function toggleDefaultTimes(currentTime, daySelection, solarDataObject) {
  * Displays a warning alert if all default times have already passed today.
  * @param boolean isWeekday - Whether today is a weekday or not.
  */
-function showTimesAlert(currentTime, isWeekday) {
+function showTimesAlert(isWeekday) {
   let alertSpace = document.getElementById("times-alert-space");
-  let hour = getTime(currentTime);
+  let hour = getTime();
   if (!daySelection && isWeekday && hour > 6 && hour <= 18) {
     alertSpace.innerHTML = `<div id="times-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
                                 Some of the default weekday times have already passed today.
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>`;
   } else if (!daySelection && isWeekday && hour > 18) {
+    console.log("No more default weekday times.");
     alertSpace.innerHTML = `<div id="times-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
                                 All of the default weekday times have already passed today.
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -376,10 +363,11 @@ function showTimesAlert(currentTime, isWeekday) {
  * Hides any previously displayed alert about default times having passed.
  */
 function hideTimesAlert() {
-  var alertElement = document.getElementById("times-alert");
+  let alertElement = document.getElementById("times-alert");
   if (alertElement) {
     alertElement.classList.remove("show");
     alertElement.classList.add("collapse");
+    console.log("Should have hidden...");
   }
 }
 
@@ -387,16 +375,16 @@ function hideTimesAlert() {
  * Checks to see if any preferred times have been selected.
  * @returns {boolean} True if no preferred times are checked; otherwise false.
  */
-function checkIfNoTimes(absButtons, solButtons) {
+function checkIfNoTimes() {
   if (document.getElementById("choice-absolute").checked) {
     for (let i = 0; i < 24; i++) {
-      if (absButtons[i].checked) {
+      if (absTimeButtons[i].checked) {
         return false;
       }
     }
   } else {
     for (let i = 0; i < 8; i++) {
-      if (solButtons[i].checked) {
+      if (solarTimeButtons[i].checked) {
         return false;
       }
     }
@@ -404,13 +392,13 @@ function checkIfNoTimes(absButtons, solButtons) {
   return true;
 }
 
-function updateSolarTimes(solarDataObject, daySelection) {
-  if (solarDataObject == null) {
+function updateSolarTimes() {
+  if (sunTimes == null) {
     return;
   }
   for (let i = 0; i < 8; i++) {
     let currentSpan = document.getElementById(solarTimeInsertIds[i]);
-    currentSpan.innerText = solarDataObject.allEvents[daySelection][i];
+    currentSpan.innerText = sunTimes.allEvents[daySelection][i];
   }
 }
 
@@ -424,7 +412,7 @@ function getArrayIndex(hour, day) {
   return day * 24 + hour;
 }
 
-function integerToTimeText(n, daySelection) {
+function integerToTimeText(n) {
   n -= 24 * daySelection;
   if (n == 0) {
     return "12 am";
@@ -440,16 +428,12 @@ function integerToTimeText(n, daySelection) {
 /**
  * Updates the best time (and score) within the user's checked times.
  */
-function updatePreferredTimeAndScore(
-  absButtons,
-  solButtons,
-  forecastConditions
-) {
-  if (checkIfNoTimes(absButtons, solButtons)) {
+function updatePreferredTimeAndScore() {
+  if (checkIfNoTimes()) {
     preferenceText.innerHTML =
       "<em>Select times below to see your best preferred time.</em>";
     preferredScore.innerText = "";
-  } else if (forecastConditions == null) {
+  } else if (weatherForecast == null) {
     return;
   } else {
     let sliderValues = [
@@ -476,17 +460,16 @@ function updatePreferredTimeAndScore(
     // console.log(forecastConditions);
     let [overallBest, userBest] = findBestTime(
       sliderValues,
-      [2.5, 2, 1.5, 1, 3, 1],
-      forecastConditions,
+      [2.5, 0, 0, 0, 0, 0],
+      weatherForecast.forecastGrid,
       daySelection,
       currentHour,
       userHours
     );
 
-    bestTimeSpace.innerText = integerToTimeText(overallBest, daySelection);
+    bestTimeSpace.innerText = integerToTimeText(overallBest);
     preferenceText.innerHTML = `Within your preferred times, the best time is <span id="best_preferred_time"><strong>${integerToTimeText(
-      userBest,
-      daySelection
+      userBest
     )}</strong></span>.`;
   }
 }
@@ -496,8 +479,8 @@ function updatePreferredTimeAndScore(
  * @param {number} f - The temperature in degrees Fahrenheit
  * @returns {number} The temperature in degrees Celsius
  */
-function fahrenheitToCelsius(f) {
-  return ((f + 40) / 1.8 - 40).toFixed(1);
+function fahrenheitToCelsius(degF) {
+  return ((degF + 40) / 1.8 - 40).toFixed(1);
 }
 
 /**
@@ -505,8 +488,8 @@ function fahrenheitToCelsius(f) {
  * @param {number} s - The speed in miles per hour
  * @returns {number} The speed in kilometers per hour
  */
-function mphToKmh(s) {
-  return (s * 1.60934).toFixed(1);
+function mphToKmh(speed) {
+  return (speed * 1.60934).toFixed(1);
 }
 
 /**
@@ -635,15 +618,15 @@ function displayWindSpeed(text, slider, limit, isMetric) {
 // }
 
 export {
+  daySelection,
   automaticLocation,
   getTime,
   getDayAfterTomorrow,
-  today,
-  tomorrow,
-  dayAfter,
+  applyDay,
   absoluteTimes,
   relativeTimes,
   setTodaysButtons,
+  setFutureDaysButtons,
   toggleDefaultWeekdayTimes,
   toggleDefaultWeekendTimes,
   updateSolarTimes,
