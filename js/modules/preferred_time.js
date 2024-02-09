@@ -8,9 +8,10 @@ function findBestTime(
   currentHour,
   userTimes
 ) {
-  console.log("User Times:", userTimes);
-  console.log("Forecast data:", forecastMatrix);
-  console.log("Day:", daySelection);
+  console.log(weightsArray);
+  // console.log("User Times:", userTimes);
+  // console.log("Forecast data:", forecastMatrix);
+  // console.log("Day:", daySelection);
   let startPoint = daySelection ? daySelection * 24 : currentHour;
   let endPoint = daySelection ? startPoint + 24 : 24;
 
@@ -45,7 +46,7 @@ function findBestTime(
     }
   }
   // console.log(differenceArray);
-  console.log(overallBestTime, userBestTime);
+  // console.log(overallBestTime, userBestTime);
   return [overallBestTime, userBestTime];
 }
 

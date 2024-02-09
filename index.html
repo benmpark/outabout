@@ -34,7 +34,7 @@
     </header>
 
     <main class="container-lg mt-4">
-      <section id="forecast_range_and_results">
+      <section class="mb-2 bg-light" id="forecast_range_and_results">
         <div
           class="btn-group d-flex w-100"
           role="group"
@@ -65,7 +65,7 @@
       </section>
 
       <section id="location_info" class="mt-0">
-        <div class="border border-primary pt-3">
+        <div class="border border-primary pt-3 mb-2 bg-light">
           <h2>Location & Current Conditions</h2>
           <div class="row pt-2 mb-2 mx-2">
             <div class="col-xl-4 col-lg-5 col-md-6 col-12">
@@ -95,8 +95,8 @@
         </div>
       </section>
 
-      <section class="" id="settings">
-        <div class="border border-primary rounded-bottom py-3 px-4">
+      <section class="mb-2 bg-light" id="settings">
+        <div class="border border-primary pt-3 px-4">
           <h2>Settings &amp; Preferences</h2>
 
           <h5 class="mt-0">Preferred Times</h5>
@@ -271,9 +271,9 @@
             <div class="col-lg-4 col-12">
               <span class="h5">Preferred Conditions</span>
             </div>
-            <div class="col-lg-8 col-12">
+            <!-- <div class="col-lg-8 col-12">
               <span class="h6 text-start d-none"><em>Drag to reorder; conditions listed first are prioritized.</em></span>
-            </div>
+            </div> -->
           </div>
           <div class="btn-group mt-2" role="group" aria-label="Units Radio Choices" style="width: 250px;">
             <input type="radio" class="btn-check" name="units_button" id="imperial1" autocomplete="off" checked>
@@ -283,48 +283,180 @@
             <label class="btn btn-outline-primary" for="metric1">&#8451;, km/h</label>
           </div>
           <div class="row mt-3">
-            <div class="col-lg-4 col-md-6 col-12">
-              <label class="form-label" for="cloud_cover">Temperature: </label>
-              <span id="temperature_value">50</span><span class="degrees">&#8457;</span><span id="temp_limit"></span>
+            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
+              <div class="d-flex">
+                <div class="form-check">
+                  <input class="form-check-input parameter-include" type="checkbox" value="" id="temperatureCheck" checked>
+                </div>
+                <label class="form-label" for="temperature">Temperature:&nbsp;</label>
+                <span id="temperature_value"></span><span class="degrees">&#8457</span><span id="temp_limit"></span>
+              </div>
               <div class="range">
                 <input type="range" class="form-range" id="temperature" min="0" value="65" max="100"/>
               </div>
+              <div class="relative-settings d-flex align-items-center">
+                <em class="me-2">Relative weight:&nbsp;</em>
+                <div class="input-group" id="temperatureWeight">
+                  <select class="form-select weight-dropdown" id="temperatureDropdown">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            <div class="col-lg-4 col-md-6 col-12">
-              <label class="form-label" for="dew_point">Dew Point: </label>
-              <span id="dewpoint_value">50</span><span class="degrees">&#8457;</span><span id="dewpoint_limit"></span>
-              <a tabindex="0" class="" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="right" data-bs-html="true" data-bs-content="The dew point of a given body of air is the temperature to which it must be cooled to become saturated with water vapor. <a href='https://en.wikipedia.org/wiki/Dew_point'>More...</a>"><i class="bi bi-question-circle"></i></a>
+            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
+              <div class="d-flex">
+                <div class="form-check">
+                  <input class="form-check-input parameter-include" type="checkbox" value="" id="dewPointCheck" checked>
+                </div>
+                <label class="form-label" for="dew_point">Dew Point:&nbsp;</label>
+                <span id="dewpoint_value"></span><span class="degrees">&#8457;</span><span id="dewpoint_limit"></span>
+                <a tabindex="0" class="" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="right" data-bs-html="true" data-bs-content="The dew point of a given body of air is the temperature to which it must be cooled to become saturated with water vapor. <a href='https://en.wikipedia.org/wiki/Dew_point'>More...</a>"><i class="bi bi-question-circle"></i></a>
+              </div>
               <div class="range">
                 <input type="range" class="form-range" id="dew_point" min="40" value="55" max="80"/>
               </div>
+              <div class="relative-settings d-flex align-items-center">
+                <em class="me-2">Relative weight:&nbsp;</em>
+                <div class="input-group" id="dewPointWeight">
+                  <select class="form-select weight-dropdown" id="dewPointDropdown">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            <div class="col-lg-4 col-md-6 col-12">
-              <label class="form-label" for="cloud_cover">Cloud Cover: </label>
-              <span id="cloudcover_value">Sunny &#9728;</span>
+            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
+              <div class="d-flex">
+                <div class="form-check">
+                  <input class="form-check-input parameter-include" type="checkbox" value="" id="cloudCoverCheck" checked>
+                </div>
+                <label class="form-label" for="cloud_cover">Cloud Cover:&nbsp;</label>
+                <span id="cloudcover_value">Sunny &#9728;</span>
+              </div>
               <div class="range">
-                <input type="range" class="form-range" id="cloud_cover" min="0" value="0" max="3"/>
+                <input type="range" class="form-range" id="cloud_cover" min="0" value="0" max="100"/>
+              </div>
+              <div class="relative-settings d-flex align-items-center">
+                <em class="me-2">Relative weight:&nbsp;</em>
+                <div class="input-group" id="cloudCoverWeight">
+                  <select class="form-select weight-dropdown" id="cloudCoverDropdown">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6 col-12">
-              <label class="form-label" for="uv">UV Index: </label>
-              <span id="uv_value">1</span><span id="uv_limit"></span>
+            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
+              <div class="d-flex">
+                <div class="form-check">
+                  <input class="form-check-input parameter-include" type="checkbox" value="" id="uvCheck" checked>
+                </div>
+                <label class="form-label" for="uv">UV Index:&nbsp;</label>
+                <span id="uv_value">1</span><span id="uv_limit"></span>
+              </div>
               <div class="range">
-                <input type="range" class="form-range" id="uv" min="0" value="1" max="8"/>
+                <input type="range" class="form-range" id="uv" min="0" value="2" max="8"/>
+              </div>
+              <div class="relative-settings d-flex align-items-center">
+                <em class="me-2">Relative weight:&nbsp;</em>
+                <div class="input-group" id="uvWeight">
+                  <select class="form-select weight-dropdown" id="uvDropdown">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </div>
               </div>
             </div>
-            <div class="col-lg-4 col-md-6 col-12">
-              <label class="form-label" for="precip_intensity">Precipitation Intensity: </label>
-              <span id="precip_value">None</span>
+            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
+              <div class="d-flex">
+                <div class="form-check">
+                  <input class="form-check-input parameter-include" type="checkbox" value="" id="precipCheck" checked>
+                </div>
+                <label class="form-label" for="precip_intensity">Precipitation Intensity:&nbsp;</label>
+                <span id="precip_value">None</span>
+              </div>
               <div class="range">
-                <input type="range" class="form-range" id="precip_intensity" min="0" value="0" max="3"/>
+                <input type="range" class="form-range" id="precip_intensity" min="0" value="0" max="0.3" step="0.01"/>
+              </div>
+              <div class="relative-settings d-flex align-items-center">
+                <em class="me-2">Relative weight:&nbsp;</em>
+                <div class="input-group" id="precipWeight">
+                  <select class="form-select weight-dropdown" id="precipDropdown">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </div>
               </div>
             </div>
-            <div class="col-lg-4 col-md-6 col-12">
-              <label class="form-label" for="wind_speed">Wind Speed: </label>
-              <span id="windspeed_value">0</span><span class="speeds"> mph</span><span id="windpseed_limit"></span>
+            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
+              <div class="d-flex">
+                <div class="form-check">
+                  <input class="form-check-input parameter-include" type="checkbox" value="" id="windCheck" checked>
+                </div>
+                <label class="form-label" for="wind_speed">Wind Speed:&nbsp;</label>
+                <span id="windspeed_value">0</span>&nbsp;</span><span class="speeds">mph</span><span id="windpseed_limit"></span>
+              </div>
               <div class="range">
                 <input type="range" class="form-range" id="wind_speed" min="0" value="0" max="30"/>
+              </div>
+              <div class="relative-settings d-flex align-items-center">
+                <em class="me-2">Relative weight:&nbsp;</em>
+                <div class="input-group" id="windWeight">
+                  <select class="form-select weight-dropdown" id="windDropdown">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>

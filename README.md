@@ -12,16 +12,16 @@ Probably at about version 0.9 or so. :-) I'm wrapping up the initial version of 
 
 ### Next Steps
 
-- The site can recognize the user's preferred times when in the "absolute" time view (i.e., specific hours of the day), but while the "relative to sun" times are accurate (once a location is provided), I still need to make it so that the checked "sun" times are converted to absolute times for the aforementioned function.
-- Tidy up the layout.
-- Clean up the code... the project has grown considerably, and while I have started organizing things into modules, this can be further refined.
+- **Tweak the function that finds the best time given a set of preferences.** Right now it finds the difference between the value forecast and the value set in the sliders. The weights of these parameters can be adjusted by the user (which is great), but given all equal weights, absolute differences within the parameters shouldn't necessarily be treated equally. For example, a 10-degree difference in temperature (arguably) shouldn't count the same as a 10-percentage-point difference in cloud cover.
+- **Tidy up the layout** for smaller window widths.
+- **Clean up the code** The project has grown considerably, and while I have started organizing things into modules, this can be further refined.
 
 ### Down the Road
 
-- Give the user more fine-grain control: e.g., don't care about cloud cover? Exclude it from the calculations. Dew point more important than precipitation? Congrats on being a weather nerd, and let's also provide the option to set your own weights/preferences.
 - Time zone support (detect via browser, but also update based on location)
 
 ## Contents
+
 ```├── css
 
 │ ├── custom.css

@@ -55,16 +55,16 @@ const currentConditionsText = document.getElementById("current-conditions");
 
 export const absTimeButtons = document.querySelectorAll(".clock");
 export const solarTimeButtons = document.querySelectorAll(".sun");
-const solarTimeButtonIds = [
-  "night_am",
-  "civil_am",
-  "golden_am",
-  "morning",
-  "afternoon",
-  "golden_pm",
-  "civil_pm",
-  "night_pm",
-];
+// const solarTimeButtonIds = [
+//   "night_am",
+//   "civil_am",
+//   "golden_am",
+//   "morning",
+//   "afternoon",
+//   "golden_pm",
+//   "civil_pm",
+//   "night_pm",
+// ];
 
 // Weather Condition Sliders
 var popoverTriggerList = [].slice.call(
@@ -116,6 +116,12 @@ const precipitationIntensityValue = document.getElementById("precip_value");
 export const windSpeedSlider = document.getElementById("wind_speed");
 const windSpeedValue = document.getElementById("windspeed_value");
 const windSpeedLimit = document.getElementById("windpseed_limit");
+
+const parameterChecks = document.querySelectorAll(".parameter-include");
+export let parameterIncludeArray = [1, 1, 1, 1, 1, 1];
+
+const weightDropdowns = document.querySelectorAll(".weight-dropdown");
+export let weightsArray = [5, 2, 1, 2, 3, 1];
 
 ///////////////////////////////////////////////////////////////////////////////
 // EVENT HANDLERS /////////////////////////////////////////////////////////////
@@ -249,6 +255,64 @@ precipitationIntensitySlider.addEventListener("input", function () {
 windSpeedSlider.addEventListener("input", function () {
   displayWindSpeed(windSpeedValue, windSpeedSlider, windSpeedLimit, isMetric);
   updatePreferredTimeAndScore();
+});
+
+parameterChecks.forEach((checkbox) => {
+  checkbox.addEventListener("change", function (event) {
+    let parameter = event.target.id;
+    let index;
+    switch (parameter) {
+      case "temperatureCheck":
+        index = 0;
+        break;
+      case "dewPointCheck":
+        index = 1;
+        break;
+      case "cloudCoverCheck":
+        index = 2;
+        break;
+      case "uvCheck":
+        index = 3;
+        break;
+      case "precipCheck":
+        index = 4;
+        break;
+      case "windCheck":
+        index = 5;
+        break;
+    }
+    parameterIncludeArray[index] = Number(event.target.checked);
+    updatePreferredTimeAndScore();
+  });
+});
+
+weightDropdowns.forEach((dropdown) => {
+  dropdown.addEventListener("change", function (event) {
+    let parameter = event.target.id;
+    let index;
+    switch (parameter) {
+      case "temperatureDropdown":
+        index = 0;
+        break;
+      case "dewPointDropdown":
+        index = 1;
+        break;
+      case "cloudCoverDropdown":
+        index = 2;
+        break;
+      case "uvDropdown":
+        index = 3;
+        break;
+      case "precipDropdown":
+        index = 4;
+        break;
+      case "windDropdown":
+        index = 5;
+        break;
+    }
+    weightsArray[index] = Number(event.target.value);
+    updatePreferredTimeAndScore();
+  });
 });
 
 ///////////////////////////////////////////////////////////////////////////////

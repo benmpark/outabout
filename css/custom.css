@@ -1,6 +1,6 @@
 body {
   /*background-color: white;*/
-  background-image: linear-gradient(#ccc, white);
+  background-image: linear-gradient(#bbb, #eee);
   font-family: "Jost", sans-serif;
   margin-top: 1rem;
   margin-bottom: 3rem;
@@ -56,6 +56,10 @@ footer {
 
 #settings .form-label {
   font-weight: 600;
+}
+
+.relative-settings .input-group {
+  width: 100px;
 }
 
 #absolute_hours .btn,

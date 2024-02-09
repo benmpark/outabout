@@ -14,6 +14,8 @@ import {
   uvSlider,
   precipitationIntensitySlider,
   windSpeedSlider,
+  parameterIncludeArray,
+  weightsArray,
 } from "../custom_script.js";
 import { findBestTime } from "./preferred_time.js";
 
@@ -231,7 +233,7 @@ function setTodaysButtons(hour) {
   }
 
   for (let s = 0; s < 8; s++) {
-    if (solarDataObject.today.eventHourArray[s + 1] < hour) {
+    if (sunTimes.today.eventHourArray[s + 1] < hour) {
       solarTimeButtons[s].setAttribute("disabled", "");
       solarTimeButtons[s].checked = false;
     } else {
@@ -425,6 +427,15 @@ function integerToTimeText(n) {
   }
 }
 
+function checkIfNoParameters() {
+  for (let i = 0; i < 6; i++) {
+    if (parameterIncludeArray[i] == 1) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /**
  * Updates the best time (and score) within the user's checked times.
  */
@@ -433,7 +444,15 @@ function updatePreferredTimeAndScore() {
     preferenceText.innerHTML =
       "<em>Select times below to see your best preferred time.</em>";
     preferredScore.innerText = "";
+    return;
+  } else if (checkIfNoParameters()) {
+    preferenceText.innerHTML =
+      "<em>You must have at least one weather parameter selected.</em>";
+    preferredScore.innerText = "";
+    return;
   } else if (weatherForecast == null) {
+    preferenceText.innerHTML = "<em>Enter a location to get a forecast.</em>";
+    preferredScore.innerText = "";
     return;
   } else {
     let sliderValues = [
@@ -454,13 +473,36 @@ function updatePreferredTimeAndScore() {
         userHours.push(absTimeButtonIds.indexOf(button.id) + daySelection * 24);
       });
     } else {
-      console.log("Will implement solar preferences shortly.");
+      // console.log(sunTimes.allEventHours);
+      const buttons = document.querySelectorAll(".sun");
+      const checkedButtons = Array.from(buttons).filter(
+        (button) => button.checked
+      );
+      checkedButtons.forEach((button) => {
+        let startIndex = solarTimeButtonIds.indexOf(button.id);
+        // console.log("Day selection", daySelection);
+        let startHour = sunTimes.allEventHours[daySelection][startIndex];
+        let endHour = sunTimes.allEventHours[daySelection][startIndex + 1];
+        // console.log("startHour:", startHour, "endHour:", endHour);
+        if (startHour == endHour) {
+          userHours.push(startHour + 24 * daySelection);
+        } else {
+          for (let i = startHour; i < endHour; i++) {
+            userHours.push(i + 24 * daySelection);
+          }
+        }
+        // console.log(userHours);
+      });
     }
     // (Re)calcute score here
     // console.log(forecastConditions);
+    let selectWeights = new Array(6);
+    for (let i = 0; i < 6; i++) {
+      selectWeights[i] = parameterIncludeArray[i] * weightsArray[i];
+    }
     let [overallBest, userBest] = findBestTime(
       sliderValues,
-      [2.5, 0, 0, 0, 0, 0],
+      selectWeights,
       weatherForecast.forecastGrid,
       daySelection,
       currentHour,
@@ -557,17 +599,16 @@ function displayDewPoint(text, slider, limit, isMetric) {
  * Updates the cloud cover slider display.
  */
 function printCloudCover(value) {
-  switch (value) {
-    case "0":
-      return `Sunny &#9728;`;
-    case "1":
-      return `Partly Cloudy &#127780;`;
-    case "2":
-      return `Mostly Cloudy &#9925;`;
-    case "3":
-      return `Overcast &#9729;`;
-    default:
-      return ``;
+  if (Number(value) < 10) {
+    return `${value}%&nbsp;&nbsp;&#9728;`;
+  } else if (Number(value) < 40) {
+    return `Partly Cloudy &#127780;`;
+  } else if (Number(value) < 70) {
+    return `Mostly Cloudy &#9925;`;
+  } else if (Number(value) <= 100) {
+    return `Overcast &#9729;`;
+  } else {
+    return ``;
   }
 }
 
@@ -578,17 +619,16 @@ function printCloudCover(value) {
  * Updates the precipitation intensity slider display.
  */
 function printPrecipitationIntensity(value) {
-  switch (value) {
-    case "0":
-      return "None";
-    case "1":
-      return "Light";
-    case "2":
-      return "Moderate";
-    case "3":
-      return "Heavy";
-    default:
-      return "";
+  if (Number(value) == 0) {
+    return "None";
+  } else if (Number(value) < 0.1) {
+    return "Light";
+  } else if (Number(value) < 0.3) {
+    return "Moderate";
+  } else if (Number(value) == 0.3) {
+    return "Heavy";
+  } else {
+    return ``;
   }
 }
 
