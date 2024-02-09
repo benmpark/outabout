@@ -1,11 +1,12 @@
 body {
   /*background-color: white;*/
-  background-image: linear-gradient(#bbb, #eee);
+  background-image: linear-gradient(#9ec5fe, #eeeeee);
   font-family: "Jost", sans-serif;
   margin-top: 1rem;
   margin-bottom: 3rem;
   margin-left: 5%;
   margin-right: 5%;
+  color: rgb(42, 42, 42);
 }
 
 h1,
@@ -44,14 +45,16 @@ footer {
   line-height: 0.9em;
 }
 
-/* .light-shade {
-  background-color: #eee;
-} */
-
 .daily-min-max,
 .solar-times {
   font-size: small;
   font-style: italic;
+}
+
+#auto-location {
+  color: white;
+  background-color: #084198;
+  border-color: #084198;
 }
 
 #settings .form-label {
