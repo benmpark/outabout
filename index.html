@@ -41,7 +41,7 @@
           aria-label="Forecast Range Buttons"
         >
           <input type="radio" class="btn-check day-button" name="day_button" id="choice-today" autocomplete="off">
-          <label class="btn btn-outline-primary" for="choice-today">Today<br><span class="daily-min-max" id="today-hi-lo"></span></label>
+          <label class="btn btn-outline-primary" id="yo-yo" for="choice-today">Today<br><span class="daily-min-max" id="today-hi-lo"></span></label>
 
           <input type="radio" class="btn-check day-button" name="day_button" id="choice-tomorrow" autocomplete="off">
           <label class="btn btn-outline-primary" for="choice-tomorrow">Tomorrow<br><span class="daily-min-max" id="tomorrow-hi-lo"></span></label>
@@ -103,8 +103,8 @@
             <div class="row">
               <div class="col-lg-4 col-md-6 col-12">
                 <div class="btn-group" role="group" aria-label="Weekday/Weekend Default Times Buttons">
-                  <button type="button" class="btn btn-outline-dark" id="default-weekday">Set Default Weekday</button>
-                  <button type="button" class="btn btn-outline-dark" id="default-weekend">Set Default Weekend</button>
+                  <button type="button" class="btn btn-outline-primary default-times-button" id="default-weekday">Set Default Weekday</button>
+                  <button type="button" class="btn btn-outline-primary default-times-button" id="default-weekend">Set Default Weekend</button>
                 </div>
               </div>
               <div class="col-lg-8 col-md-6 col-12">
@@ -119,10 +119,10 @@
             aria-label="Time Buttons"
             >
               <input type="radio" class="btn-check" name="time_options_button" id="choice-absolute" autocomplete="off" checked>
-              <label class="btn btn-outline-primary w-50" for="choice-absolute">Absolute</label>
+              <label class="btn btn-outline-primary w-50 time-options" for="choice-absolute">Absolute</label>
 
               <input type="radio" class="btn-check" name="time_options_button" id="choice-relative" autocomplete="off">
-              <label class="btn btn-outline-primary w-50" for="choice-relative">Relative to Sun</label>
+              <label class="btn btn-outline-primary w-50 time-options" for="choice-relative">Relative to Sun</label>
             </div>
             
             <div id="absolute_hours">
@@ -229,7 +229,7 @@
             </div>
 
             <div id="sun_hours" class="d-none">
-            <div class="row">
+            <div class="row px-3">
               <div class="col-6 col-lg-3 px-0">
                 <input type="checkbox" class="btn-check sun" id="night_am" autocomplete="off">
                 <label class="btn btn-outline-dark btn-time w-100" for="night_am">Before Civil Dawn<br><span class="solar-times" id="pre-dawn-time"></span></label>
@@ -247,7 +247,7 @@
                 <label class="btn btn-outline-dark btn-time w-100" for="morning">Morning<br><span class="solar-times" id="morning-time"></span></label>
               </div>
             </div>
-            <div class="row">
+            <div class="row px-3">
               <div class="col-6 col-lg-3 px-0">
                 <input type="checkbox" class="btn-check sun weekend" id="afternoon" autocomplete="off">
                 <label class="btn btn-outline-dark btn-time w-100" for="afternoon">Afternoon<br><span class="solar-times" id="afternoon-time"></span></label>
@@ -406,7 +406,7 @@
                 <div class="form-check">
                   <input class="form-check-input parameter-include" type="checkbox" value="" id="precipCheck" checked>
                 </div>
-                <label class="form-label" for="precip_intensity">Precipitation Intensity:&nbsp;</label>
+                <label class="form-label" for="precip_intensity">Precip.:&nbsp;</label>
                 <span id="precip_value">None</span>
               </div>
               <div class="range">

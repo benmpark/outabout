@@ -300,7 +300,6 @@ function toggleDefaultWeekendTimes() {
   });
   solarTimes.forEach((element) => {
     if (sunTimes == null) {
-      console.log("No solar data; no location entered.");
       element.checked = element.classList.contains("weekend");
     } else {
       element.checked =
@@ -335,30 +334,32 @@ function toggleDefaultTimes() {
  * @param boolean isWeekday - Whether today is a weekday or not.
  */
 function showTimesAlert(isWeekday) {
-  let alertSpace = document.getElementById("times-alert-space");
+  const alertSpace = document.getElementById("times-alert-space");
   let hour = getTime();
-  if (!daySelection && isWeekday && hour > 6 && hour <= 18) {
-    alertSpace.innerHTML = `<div id="times-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
-                                Some of the default weekday times have already passed today.
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>`;
-  } else if (!daySelection && isWeekday && hour > 18) {
-    console.log("No more default weekday times.");
-    alertSpace.innerHTML = `<div id="times-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
-                                All of the default weekday times have already passed today.
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>`;
-  } else if (!daySelection && !isWeekday && hour > 8 && hour <= 18) {
-    alertSpace.innerHTML = `<div id="times-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
-                                Some of the default weekend times have already passed today.
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>`;
-  } else if (!daySelection && !isWeekday && hour > 18) {
-    alertSpace.innerHTML = `<div id="times-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
-                                All of the default weekend times have already passed today.
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>`;
+  let allSome;
+  let dayType;
+  if (daySelection || (isWeekday && hour <= 6) || (!isWeekday && hour <= 8)) {
+    alertSpace.innerHTML = ``;
+    return;
   }
+  if (!daySelection && isWeekday && hour > 6 && hour <= 18) {
+    allSome = "Some";
+    dayType = "weekday";
+  } else if (!daySelection && isWeekday && hour > 18) {
+    allSome = "All";
+    dayType = "weekday";
+  } else if (!daySelection && !isWeekday && hour > 8 && hour <= 18) {
+    allSome = "Some";
+    dayType = "weekend";
+  } else if (!daySelection && !isWeekday && hour > 18) {
+    allSome = "All";
+    dayType = "weekend";
+  } else {
+    console.log("Somethign weird happened...");
+  }
+  alertSpace.innerHTML = `<div id="times-alert" class="alert alert-warning alert-dismissible fade show" 
+    role="alert">${allSome} of the default ${dayType} times have already passed today.<button type="button" 
+    class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`;
 }
 
 /**
@@ -567,9 +568,9 @@ function displayTemp(text, slider, limit, isMetric) {
     ? fahrenheitToCelsius(parseFloat(slider.value))
     : slider.value;
   if (slider.value == 0) {
-    limit.innerText = " and colder";
+    limit.innerHTML = `&nbsp;and colder`;
   } else if (slider.value == 100) {
-    limit.innerText = " and hotter";
+    limit.innerHTML = `&nbsp;and hotter`;
   } else {
     limit.innerText = "";
   }
@@ -583,9 +584,9 @@ function displayDewPoint(text, slider, limit, isMetric) {
     ? fahrenheitToCelsius(parseFloat(slider.value))
     : slider.value;
   if (slider.value == 40) {
-    limit.innerText = " and drier";
+    limit.innerHTML = `&nbsp;and drier`;
   } else if (slider.value == 80) {
-    limit.innerText = " and muggier";
+    limit.innerHTML = `&nbsp;and muggier`;
   } else {
     limit.innerText = "";
   }
@@ -602,11 +603,11 @@ function printCloudCover(value) {
   if (Number(value) < 10) {
     return `${value}%&nbsp;&nbsp;&#9728;`;
   } else if (Number(value) < 40) {
-    return `Partly Cloudy &#127780;`;
+    return `${value}%&nbsp;&nbsp;&#127780;`;
   } else if (Number(value) < 70) {
-    return `Mostly Cloudy &#9925;`;
+    return `${value}%&nbsp;&nbsp;&#9925;`;
   } else if (Number(value) <= 100) {
-    return `Overcast &#9729;`;
+    return `${value}%&nbsp;&nbsp;&#9729;`;
   } else {
     return ``;
   }
@@ -622,11 +623,11 @@ function printPrecipitationIntensity(value) {
   if (Number(value) == 0) {
     return "None";
   } else if (Number(value) < 0.1) {
-    return "Light";
+    return `${value}"/hour <span style="font-weight: 200;">(light)</span>`;
   } else if (Number(value) < 0.3) {
-    return "Moderate";
+    return `${value}"/hr <span style="font-weight: 200;">(moderate)</span>`;
   } else if (Number(value) == 0.3) {
-    return "Heavy";
+    return `${value}"/hour+ <span style="font-weight: 200;">(heavy)</span>`;
   } else {
     return ``;
   }

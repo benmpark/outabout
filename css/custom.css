@@ -1,12 +1,24 @@
+:root {
+  --dark-text-color: rgb(42, 42, 42);
+  --blue100: #cfe2ff;
+  --blue200: #9ec5fe;
+  --blue300: #6ea8fe;
+  --blue400: #3c8bfd;
+  --blue500: #0c6efd;
+  --blue600: #0a58ca;
+  --blue700: #084198;
+  --blue800: #052c65;
+  --blue900: #031633;
+}
+
 body {
-  /*background-color: white;*/
-  background-image: linear-gradient(#9ec5fe, #eeeeee);
+  background-image: linear-gradient(var(--blue200), #eeeeee);
   font-family: "Jost", sans-serif;
   margin-top: 1rem;
   margin-bottom: 3rem;
   margin-left: 5%;
   margin-right: 5%;
-  color: rgb(42, 42, 42);
+  color: var(--dark-text-color);
 }
 
 h1,
@@ -16,9 +28,16 @@ h4 {
   text-align: center;
 }
 
-footer {
-  font-size: 0.75em;
-  text-align: center;
+@media (max-width: 425px) {
+  .btn {
+    font-size: small;
+  }
+}
+
+@media (min-width: 426px) and (max-width: 600px) {
+  .btn {
+    font-size: medium;
+  }
 }
 
 .main_info {
@@ -37,12 +56,33 @@ footer {
 }
 
 #forecast_range_and_results .btn {
-  font-size: 1.5em;
-  border-bottom-right-radius: 0px;
-  border-bottom-left-radius: 0px;
+  font-size: 4vw;
+  margin: 0;
+  border-radius: 0;
   border-bottom: 0px;
   width: 33%;
   line-height: 0.9em;
+}
+
+#forecast_range_and_results .btn:not(:checked),
+.time-options:not(:checked) {
+  background-color: var(--blue100);
+}
+
+#forecast_range_and_results .btn-check:checked + .btn-outline-primary,
+.time-options:checked + .btn-outline-primary {
+  background-color: var(--blue500);
+}
+
+#forecast_range_and_results .btn:hover,
+.time-options:hover {
+  background-color: var(--blue300);
+}
+
+@media (min-width: 600px) {
+  #forecast_range_and_results .btn {
+    font-size: 24px;
+  }
 }
 
 .daily-min-max,
@@ -53,8 +93,8 @@ footer {
 
 #auto-location {
   color: white;
-  background-color: #084198;
-  border-color: #084198;
+  background-color: var(--blue700);
+  border-color: var(--blue700);
 }
 
 #settings .form-label {
@@ -65,13 +105,43 @@ footer {
   width: 100px;
 }
 
+.default-times-button {
+  color: var(--dark-text-color);
+  border-color: var(--dark-text-color);
+}
+
+.default-times-button:hover {
+  color: var(--dark-text-color);
+  background-color: var(--blue100);
+  border-color: var(--dark-text-color);
+}
+
 #absolute_hours .btn,
 #sun_hours .btn {
   border-radius: 0px;
   border: 0px;
 }
 
+.clock:not(:checked) + .btn-outline-dark {
+  color: var(--dark-text-color);
+}
+
+.clock:checked + .btn-outline-dark,
+.sun:checked + .btn-outline-dark {
+  color: var(--dark-text-color);
+  background-color: var(--blue200);
+}
+
 .btn-time:hover {
-  color: #000;
-  background-color: rgba(255, 255, 255, 0.3);
+  color: var(--dark-text-color);
+  background-color: var(--blue100);
+}
+
+.form-select {
+  color: var(--dark-text-color);
+}
+
+footer {
+  font-size: 0.75em;
+  text-align: center;
 }

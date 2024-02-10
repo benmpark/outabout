@@ -37,6 +37,10 @@ let userLatitude;
 let userLongitude;
 export let sunTimes;
 export let weatherForecast;
+let userWeekdayAbsSelections = [6, 7, 8, 17, 18];
+let userWeekendAbsSelections = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+let userWeekdaySolarSelections = [1, 2, 5, 6];
+let userWeekendSolarSelections = [2, 3, 4, 5];
 
 ///////////////////////////////////////////////////////////////////////////////
 // DOM ELEMENTS SELECTION /////////////////////////////////////////////////////
@@ -246,7 +250,7 @@ uvSlider.addEventListener("input", function () {
 });
 
 precipitationIntensitySlider.addEventListener("input", function () {
-  precipitationIntensityValue.innerText = printPrecipitationIntensity(
+  precipitationIntensityValue.innerHTML = printPrecipitationIntensity(
     precipitationIntensitySlider.value
   );
   updatePreferredTimeAndScore();
@@ -259,27 +263,52 @@ windSpeedSlider.addEventListener("input", function () {
 
 parameterChecks.forEach((checkbox) => {
   checkbox.addEventListener("change", function (event) {
-    let parameter = event.target.id;
+    const parameter = event.target.id;
     let index;
+    let connectedSliderId;
+    let connectedDropdownId;
     switch (parameter) {
       case "temperatureCheck":
         index = 0;
+        connectedSliderId = "temperature";
+        connectedDropdownId = "temperatureDropdown";
         break;
       case "dewPointCheck":
         index = 1;
+        connectedSliderId = "dew_point";
+        connectedDropdownId = "dewPointDropdown";
         break;
       case "cloudCoverCheck":
         index = 2;
+        connectedSliderId = "cloud_cover";
+        connectedDropdownId = "cloudCoverDropdown";
         break;
       case "uvCheck":
         index = 3;
+        connectedSliderId = "uv";
+        connectedDropdownId = "uvDropdown";
         break;
       case "precipCheck":
         index = 4;
+        connectedSliderId = "precip_intensity";
+        connectedDropdownId = "precipDropdown";
         break;
       case "windCheck":
         index = 5;
+        connectedSliderId = "wind_speed";
+        connectedDropdownId = "windDropdown";
         break;
+    }
+    if (!event.target.checked) {
+      document.getElementById(connectedSliderId).setAttribute("disabled", "");
+      document.getElementById(connectedDropdownId).setAttribute("disabled", "");
+    } else {
+      document
+        .getElementById(connectedSliderId)
+        .removeAttribute("disabled", "");
+      document
+        .getElementById(connectedDropdownId)
+        .removeAttribute("disabled", "");
     }
     parameterIncludeArray[index] = Number(event.target.checked);
     updatePreferredTimeAndScore();
