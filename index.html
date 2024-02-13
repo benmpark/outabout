@@ -52,13 +52,11 @@
 
         <div class="border border-primary mx-0 my-0 py-2 light-shade">
           <div class="row main_info mx-2">
-            <!--The best time to get outside <span id="target_day">later today</span> is <span id="best_time"><strong>7 am</strong></span>.-->
             <div class="col-xl-7 col-md-8 col-sm-9 col-12"><span id="best-time-text">The best time to get outside <span id="target_day">later today</span> is <strong><span id="best-time">???</span></strong>.</span></div>
             <div class="col-xl-5 col-md-4 col-sm-3 col-12">Score: <span id="best_score"></span></div>
             <div class="col-12" id="best-time-forecast"></div>
           </div>
           <div class="row main_info mt-2 mx-2" id="preferred_row">
-            <!--Within your preferred times, the best time is <span id="best_preferred_time"><strong>5 pm</strong></span>.-->
             <div class="col-xl-7 col-md-8 col-sm-9 col-12"><span id="preferred-time-text">With a location and times selected below, you can see your best preferred time.</span></div>
             <div class="col-xl-5 col-md-4 col-sm-3 col-12">Score: <span id="best_preferred_score"></span></div>
             <div class="col-12" id="preferred-time-forecast"></div>
@@ -328,8 +326,8 @@
                 <div class="input-group" id="dewPointWeight">
                   <select class="form-select weight-dropdown" id="dewPointDropdown">
                     <option value="1">1</option>
-                    <option value="2" selected>2</option>
-                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
                     <option value="6">6</option>
@@ -344,13 +342,13 @@
             <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
               <div class="d-flex">
                 <div class="form-check">
-                  <input class="form-check-input parameter-include" type="checkbox" value="" id="cloudCoverCheck" checked>
+                  <input class="form-check-input parameter-include" type="checkbox" value="" id="cloudCoverCheck">
                 </div>
                 <label class="form-label" for="cloud_cover">Cloud Cover:&nbsp;</label>
                 <span id="cloudcover_value">Sunny &#9728;</span>
               </div>
               <div class="range">
-                <input type="range" class="form-range" id="cloud_cover" min="0" value="0" max="100"/>
+                <input type="range" class="form-range" id="cloud_cover" min="0" value="0" max="100" disabled/>
               </div>
               <div class="relative-settings d-flex align-items-center">
                 <em class="me-2">Relative weight:&nbsp;</em>
@@ -403,42 +401,13 @@
             <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
               <div class="d-flex">
                 <div class="form-check">
-                  <input class="form-check-input parameter-include" type="checkbox" value="" id="precipCheck" checked>
-                </div>
-                <label class="form-label" for="precip_intensity">Precip.:&nbsp;</label>
-                <span id="precip_value">None</span>
-              </div>
-              <div class="range">
-                <input type="range" class="form-range" id="precip_intensity" min="0" value="0" max="0.3" step="0.01"/>
-              </div>
-              <div class="relative-settings d-flex align-items-center">
-                <em class="me-2">Relative weight:&nbsp;</em>
-                <div class="input-group" id="precipWeight">
-                  <select class="form-select weight-dropdown" id="precipDropdown">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
-              <div class="d-flex">
-                <div class="form-check">
-                  <input class="form-check-input parameter-include" type="checkbox" value="" id="windCheck" checked>
+                  <input class="form-check-input parameter-include" type="checkbox" value="" id="windCheck">
                 </div>
                 <label class="form-label" for="wind_speed">Wind:&nbsp;</label>
                 <span id="windspeed_value">0</span>&nbsp;</span><span class="speeds">mph</span><span id="windpseed_limit"></span>
               </div>
               <div class="range">
-                <input type="range" class="form-range" id="wind_speed" min="0" value="0" max="30"/>
+                <input type="range" class="form-range" id="wind_speed" min="0" value="5" max="30" disabled/>
               </div>
               <div class="relative-settings d-flex align-items-center">
                 <em class="me-2">Relative weight:&nbsp;</em>
@@ -456,6 +425,39 @@
                     <option value="10">10</option>
                   </select>
                 </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
+              <div class="d-flex">
+                <div class="form-check">
+                  <input class="form-check-input parameter-include" type="checkbox" value="" id="precipCheck" checked>
+                </div>
+                <label class="form-label" for="precip_intensity">Precip.:&nbsp;</label>
+                <span id="precip_value">None</span>
+              </div>
+              <div class="range">
+                <input type="range" class="form-range" id="precip_intensity" min="0" value="0" max="0.3" step="0.01" disabled/>
+              </div>
+              <div class="relative-settings d-flex align-items-center">
+                <em class="me-2">Relative weight:&nbsp;</em>
+                <div class="input-group" id="precipWeight">
+                  <select class="form-select weight-dropdown" id="precipDropdown" disabled>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="only-no-precip" checked>
+                <label class="form-check-label" for="only-no-precip">Exclude times with precipitation</label>
               </div>
             </div>
           </div>

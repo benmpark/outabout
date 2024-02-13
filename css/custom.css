@@ -13,6 +13,9 @@
 
 body {
   background-image: linear-gradient(var(--blue200), #eeeeee);
+  background-attachment: fixed;
+  background-size: cover;
+  min-height: 100vh;
   font-family: "Jost", sans-serif;
   margin-top: 1rem;
   margin-bottom: 3rem;

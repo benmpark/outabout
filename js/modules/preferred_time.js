@@ -3,6 +3,7 @@
 function findBestTime(
   preferencesArray,
   weightsArray,
+  noPrecip,
   forecastMatrix,
   daySelection,
   currentHour,
@@ -13,7 +14,6 @@ function findBestTime(
     (accumulator, currentValue) => accumulator + currentValue,
     0
   );
-  console.log(weightsSum);
   const categoryAdjustments = [1, 0.667, 0.4, 4, 2, 133.333, 0.667];
   const startPoint = daySelection ? daySelection * 24 : currentHour;
   const endPoint = daySelection ? startPoint + 24 : 24;
@@ -43,17 +43,25 @@ function findBestTime(
       hourlyScore = 100 - rawScore / weightsSum;
     }
     scores[i - startPoint] = hourlyScore;
-    if (hourlyScore > bestOverallScore) {
+
+    if (
+      hourlyScore > bestOverallScore &&
+      (!noPrecip || forecastMatrix[5][i] == 0)
+    ) {
       overallBestTime = i;
       bestOverallScore = Math.round(hourlyScore);
     }
-    if (hourlyScore > bestUserScore && userTimes.includes(i)) {
+    if (
+      hourlyScore > bestUserScore &&
+      userTimes.includes(i) &&
+      (!noPrecip || forecastMatrix[5][i] == 0)
+    ) {
       userBestTime = i;
       bestUserScore = Math.round(hourlyScore);
     }
   }
-  console.log(differenceArray);
-  console.log(scores);
+  //   console.log(differenceArray);
+  //   console.log(scores);
 
   return [overallBestTime, bestOverallScore, userBestTime, bestUserScore];
 }

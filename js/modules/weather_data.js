@@ -20,8 +20,8 @@ class ForecastData {
     hourlyDewPoints,
     hourlyCloudCover,
     hourlyUV,
-    hourlyPrecip,
-    hourlyWind
+    hourlyWind,
+    hourlyPrecip
   ) {
     this.dailyHighs = dailyHighs;
     this.dailyLows = dailyLows;
@@ -29,8 +29,8 @@ class ForecastData {
     this.hourlyDewPoints = hourlyDewPoints;
     this.hourlyCloudCover = hourlyCloudCover;
     this.hourlyUV = hourlyUV;
-    this.hourlyPrecip = hourlyPrecip;
     this.hourlyWind = hourlyWind;
+    this.hourlyPrecip = hourlyPrecip;
     this.units = "&#8457;";
 
     this.forecastGrid = [
@@ -38,8 +38,8 @@ class ForecastData {
       hourlyDewPoints,
       hourlyCloudCover,
       hourlyUV,
-      hourlyPrecip,
       hourlyWind,
+      hourlyPrecip,
     ];
   }
 }
