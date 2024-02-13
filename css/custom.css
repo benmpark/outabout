@@ -91,6 +91,12 @@ h4 {
   font-style: italic;
 }
 
+#best-time-forecast,
+#preferred-time-forecast {
+  font-weight: 300;
+  font-size: 0.8em;
+}
+
 #auto-location {
   color: white;
   background-color: var(--blue700);
@@ -106,14 +112,19 @@ h4 {
 }
 
 .default-times-button {
-  color: var(--dark-text-color);
-  border-color: var(--dark-text-color);
+  color: var(--blue700);
+  border-color: var(--blue700);
 }
 
 .default-times-button:hover {
-  color: var(--dark-text-color);
+  color: var(--blue700);
   background-color: var(--blue100);
-  border-color: var(--dark-text-color);
+}
+
+.default-times-button.checked {
+  color: white;
+  background-color: var(--blue700);
+  border-color: var(--blue700);
 }
 
 #absolute_hours .btn,
@@ -122,9 +133,9 @@ h4 {
   border: 0px;
 }
 
-.clock:not(:checked) + .btn-outline-dark {
+/* .clock:not(:checked) + .btn-outline-dark {
   color: var(--dark-text-color);
-}
+} */
 
 .clock:checked + .btn-outline-dark,
 .sun:checked + .btn-outline-dark {

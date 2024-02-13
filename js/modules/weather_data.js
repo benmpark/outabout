@@ -4,11 +4,11 @@ class CurrentConditions {
     this.apparentTemp = apparentTemp;
     this.isDaytime = isDaytime;
     this.pop = pop;
-    this.displayHTML = `<em>Currently</em> ${this.currentTemp.toFixed(
+    this.displayHTML = `Currently <span id="current-condition-temp">${this.currentTemp.toFixed(
       0
-    )}&#8457; (feels like ${this.apparentTemp.toFixed(
+    )}&#8457;</span> (feels like <span id="current-condition-dew-point">${this.apparentTemp.toFixed(
       0
-    )}&#8457;). Chance of precipitation ${this.pop}%.`;
+    )}&#8457;</span>). Chance of precipitation ${this.pop}&percnt;.`;
   }
 }
 

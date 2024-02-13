@@ -7,6 +7,7 @@
 import {
   daySelection,
   automaticLocation,
+  isWeekday,
   getTime,
   getDayAfterTomorrow,
   applyDay,
@@ -15,14 +16,19 @@ import {
   setTodaysButtons,
   toggleDefaultWeekdayTimes,
   toggleDefaultWeekendTimes,
+  checkIfDefaultTimes,
+  toggleTimes,
   updateSolarTimes,
   getArrayIndex,
+  updateCurrentConditions,
+  getCheckedTimeButtons,
   updatePreferredTimeAndScore,
   imperialUnits,
   metricUnits,
   displayTemp,
   displayDewPoint,
   printCloudCover,
+  colorUvValue,
   printPrecipitationIntensity,
   displayWindSpeed,
 } from "./modules/utilities.js";
@@ -36,11 +42,11 @@ export let currentTime = new Date();
 let userLatitude;
 let userLongitude;
 export let sunTimes;
+export let localConditions;
 export let weatherForecast;
-let userWeekdayAbsSelections = [6, 7, 8, 17, 18];
-let userWeekendAbsSelections = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
-let userWeekdaySolarSelections = [1, 2, 5, 6];
-let userWeekendSolarSelections = [2, 3, 4, 5];
+let userTimeAlterations = false;
+export let userAbsSelections = [[], [], []];
+export let userSolarSelections = [[], [], []];
 
 ///////////////////////////////////////////////////////////////////////////////
 // DOM ELEMENTS SELECTION /////////////////////////////////////////////////////
@@ -59,18 +65,8 @@ const currentConditionsText = document.getElementById("current-conditions");
 
 export const absTimeButtons = document.querySelectorAll(".clock");
 export const solarTimeButtons = document.querySelectorAll(".sun");
-// const solarTimeButtonIds = [
-//   "night_am",
-//   "civil_am",
-//   "golden_am",
-//   "morning",
-//   "afternoon",
-//   "golden_pm",
-//   "civil_pm",
-//   "night_pm",
-// ];
+const allTimeButtons = document.querySelectorAll(".clock, .sun");
 
-// Weather Condition Sliders
 var popoverTriggerList = [].slice.call(
   document.querySelectorAll('[data-bs-toggle="popover"]')
 );
@@ -83,8 +79,10 @@ var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
   );
 });
 
-const defaultWeekdayTimes = document.getElementById("default-weekday");
-const defaultWeekendTimes = document.getElementById("default-weekend");
+export const defaultWeekdayTimes = document.getElementById("default-weekday");
+export const defaultWeekendTimes = document.getElementById("default-weekend");
+const defaultTimesButtons = document.querySelectorAll(".default-times-button");
+const unitsButtons = document.querySelectorAll(".units-buttons");
 
 const imperialButtons = [
   document.getElementById("imperial0"),
@@ -148,14 +146,18 @@ locationField.addEventListener("keypress", function (event) {
 
 autoLocationButton.addEventListener("click", automaticLocation);
 
-imperialButtons.forEach((imperialButton) => {
-  imperialButton.addEventListener("click", function () {
-    isMetric = false;
-    imperialButtons[0].checked = true;
-    imperialButtons[1].checked = true;
-    metricButtons[0].checked = false;
-    metricButtons[1].checked = false;
-    imperialUnits(degreeSymbols, speedSymbols);
+unitsButtons.forEach((button) => {
+  button.addEventListener("click", function (event) {
+    isMetric = event.target.id == "metric0" || event.target.id == "metric1";
+    imperialButtons[0].checked = 1 - isMetric;
+    imperialButtons[1].checked = 1 - isMetric;
+    metricButtons[0].checked = isMetric;
+    metricButtons[1].checked = isMetric;
+    if (isMetric) {
+      metricUnits(degreeSymbols, speedSymbols);
+    } else {
+      imperialUnits(degreeSymbols, speedSymbols);
+    }
     displayTemp(
       temperatureValue,
       temperatureSlider,
@@ -164,35 +166,36 @@ imperialButtons.forEach((imperialButton) => {
     );
     displayDewPoint(dewPointValue, dewPointSlider, dewPointLimit, isMetric);
     displayWindSpeed(windSpeedValue, windSpeedSlider, windSpeedLimit, isMetric);
+    updateCurrentConditions();
+    updatePreferredTimeAndScore();
   });
 });
 
-metricButtons.forEach((metricButton) => {
-  metricButton.addEventListener("click", function () {
-    isMetric = true;
-    imperialButtons[0].checked = false;
-    imperialButtons[1].checked = false;
-    metricButtons[0].checked = true;
-    metricButtons[1].checked = true;
-    metricUnits(degreeSymbols, speedSymbols);
-    displayTemp(
-      temperatureValue,
-      temperatureSlider,
-      temperatureLimit,
-      isMetric
-    );
-    displayDewPoint(dewPointValue, dewPointSlider, dewPointLimit, isMetric);
-    displayWindSpeed(windSpeedValue, windSpeedSlider, windSpeedLimit, isMetric);
+defaultTimesButtons.forEach((button) => {
+  button.addEventListener("click", function (event) {
+    let isDefaultWeekday = event.target.id == "default-weekday";
+    if (isDefaultWeekday) {
+      toggleDefaultWeekdayTimes();
+      defaultWeekdayTimes.classList.add("checked");
+      defaultWeekendTimes.classList.remove("checked");
+    } else {
+      toggleDefaultWeekendTimes();
+      defaultWeekendTimes.classList.add("checked");
+      defaultWeekdayTimes.classList.remove("checked");
+    }
+    toggleTimes();
   });
 });
 
-defaultWeekdayTimes.addEventListener("click", function () {
-  toggleDefaultWeekdayTimes();
-});
+// defaultWeekdayTimes.addEventListener("click", function () {
+//   toggleDefaultWeekdayTimes();
+//   toggleTimes();
+// });
 
-defaultWeekendTimes.addEventListener("click", function () {
-  toggleDefaultWeekendTimes();
-});
+// defaultWeekendTimes.addEventListener("click", function () {
+//   toggleDefaultWeekendTimes();
+//   toggleTimes();
+// });
 
 document
   .getElementById("choice-absolute")
@@ -208,19 +211,13 @@ document
     updatePreferredTimeAndScore();
   });
 
-absTimeButtons.forEach((timeButton) => {
+allTimeButtons.forEach((timeButton) => {
   timeButton.addEventListener("click", function () {
-    defaultWeekdayTimes.checked = false;
-    defaultWeekendTimes.checked = false;
+    userTimeAlterations = true;
+    let isAbsolute = document.getElementById("choice-absolute").checked;
     updatePreferredTimeAndScore();
-  });
-});
-
-solarTimeButtons.forEach((timeButton) => {
-  timeButton.addEventListener("click", function () {
-    defaultWeekdayTimes.checked = false;
-    defaultWeekendTimes.checked = false;
-    updatePreferredTimeAndScore();
+    getCheckedTimeButtons(isAbsolute);
+    checkIfDefaultTimes();
   });
 });
 
@@ -241,6 +238,7 @@ cloudCoverSlider.addEventListener("input", function () {
 
 uvSlider.addEventListener("input", function () {
   uvValue.innerText = uvSlider.value;
+  colorUvValue(uvValue, uvSlider.value);
   if (uvSlider.value == 8) {
     uvLimit.innerText = "+";
   } else {
@@ -347,7 +345,16 @@ weightDropdowns.forEach((dropdown) => {
 ///////////////////////////////////////////////////////////////////////////////
 // INITIALIZATION & SETUP /////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-var currentHour = getTime(currentTime);
+for (let i = 0; i < 3; i++) {
+  userAbsSelections[i] = isWeekday(currentTime.getDay() + i)
+    ? [6, 7, 8, 17, 18]
+    : [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+  userSolarSelections[i] = isWeekday(currentTime.getDay() + i)
+    ? [1, 2, 5, 6]
+    : [2, 3, 4, 5];
+}
+
+let currentHour = getTime(currentTime);
 
 if (currentHour <= 18) {
   document.getElementById("choice-today").checked = true;
@@ -360,16 +367,20 @@ if (currentHour <= 18) {
 document.getElementById("day-after-text").innerText =
   getDayAfterTomorrow(currentTime);
 
-let isMetric = false;
+export let isMetric = false;
 
-temperatureValue.innerText = temperatureSlider.value;
+temperatureValue.innerHTML = temperatureSlider.value;
+displayTemp(temperatureValue, temperatureSlider, temperatureLimit, isMetric);
 dewPointValue.innerText = dewPointSlider.value;
+displayDewPoint(dewPointValue, dewPointSlider, dewPointLimit, isMetric);
 cloudCoverValue.innerHTML = printCloudCover(cloudCoverSlider.value);
 uvValue.innerText = uvSlider.value;
+colorUvValue(uvValue, uvSlider.value);
 precipitationIntensityValue.innerText = printPrecipitationIntensity(
   precipitationIntensitySlider.value
 );
 windSpeedValue.innerText = windSpeedSlider.value;
+displayWindSpeed(windSpeedValue, windSpeedSlider, windSpeedLimit, isMetric);
 
 ///////////////////////////////////////////////////////////////////////////////
 // API REQUESTS AND DATA HANDLING /////////////////////////////////////////////
@@ -407,7 +418,7 @@ function processUserLocation(entry) {
     )}&format=geocodejson`;
   }
 
-  //   console.log(url); // remove later
+  //   console.log(url);
   fetch(url)
     .then(function (response) {
       return response.json();
@@ -454,14 +465,13 @@ function getSolarTimes(lat, long) {
 }
 
 function getCurrentWeather(lat, long) {
-  //   var units = isMetric
   var url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current=temperature_2m,apparent_temperature,is_day&hourly=temperature_2m,dew_point_2m,precipitation_probability,precipitation,weather_code,cloud_cover,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=3`;
   fetch(url)
     .then(function (response) {
       return response.json();
     })
     .then(function (data) {
-      var localConditions = new CurrentConditions(
+      localConditions = new CurrentConditions(
         data.current.temperature_2m,
         data.current.apparent_temperature,
         data.current.is_day,
@@ -498,7 +508,9 @@ function getCurrentWeather(lat, long) {
       } Lo: ${weatherForecast.dailyLows[2].toFixed(0)}${weatherForecast.units}`;
 
       currentConditionsText.innerHTML = localConditions.displayHTML;
-      console.log("Attempting to update preferred time and score...");
+      if (isMetric) {
+        updateCurrentConditions();
+      }
       updatePreferredTimeAndScore();
     })
     .catch(function (error) {
