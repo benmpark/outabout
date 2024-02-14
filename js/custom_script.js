@@ -4,13 +4,9 @@
 // OTHER MODULES //////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+import { updatePreferredTimeAndScore } from "./modules/preferred_time.js";
+import SolarData from "./modules/solar_data.js";
 import {
-  daySelection,
-  automaticLocation,
-  isWeekday,
-  getTime,
-  getDayAfterTomorrow,
-  applyDay,
   absoluteTimes,
   relativeTimes,
   setTodaysButtons,
@@ -19,21 +15,29 @@ import {
   checkIfDefaultTimes,
   toggleTimes,
   updateSolarTimes,
-  getArrayIndex,
-  updateCurrentConditions,
   getCheckedTimeButtons,
-  updatePreferredTimeAndScore,
+} from "./modules/time_preferences.js";
+import {
+  daySelection,
+  automaticLocation,
+  isWeekday,
+  getTime,
+  getDayAfterTomorrow,
+  applyDay,
+  getArrayIndex,
   imperialUnits,
   metricUnits,
+} from "./modules/utilities.js";
+import { CurrentConditions, ForecastData } from "./modules/weather_data.js";
+import {
+  updateCurrentConditions,
   displayTemp,
   displayDewPoint,
   printCloudCover,
   colorUvValue,
-  printPrecipitationIntensity,
   displayWindSpeed,
-} from "./modules/utilities.js";
-import { CurrentConditions, ForecastData } from "./modules/weather_data.js";
-import SolarData from "./modules/solar_data.js";
+  printPrecipitationIntensity,
+} from "./modules/weather_preferences.js";
 
 ///////////////////////////////////////////////////////////////////////////////
 // CONSTANTS & CONFIGURATION //////////////////////////////////////////////////
@@ -44,7 +48,6 @@ let userLongitude;
 export let sunTimes;
 export let localConditions;
 export let weatherForecast;
-let userTimeAlterations = false;
 export let userAbsSelections = [[], [], []];
 export let userSolarSelections = [[], [], []];
 
@@ -111,19 +114,21 @@ export const uvSlider = document.getElementById("uv");
 const uvValue = document.getElementById("uv_value");
 const uvLimit = document.getElementById("uv_limit");
 
-export const precipitationIntensitySlider =
-  document.getElementById("precip_intensity");
-const precipitationIntensityValue = document.getElementById("precip_value");
-
 export const windSpeedSlider = document.getElementById("wind_speed");
 const windSpeedValue = document.getElementById("windspeed_value");
 const windSpeedLimit = document.getElementById("windpseed_limit");
 
+export const precipitationIntensitySlider =
+  document.getElementById("precip_intensity");
+const precipitationIntensityValue = document.getElementById("precip_value");
+
 const parameterChecks = document.querySelectorAll(".parameter-include");
-export let parameterIncludeArray = [1, 1, 1, 1, 1, 1];
+export let parameterIncludeArray = [1, 1, 0, 1, 1, 0];
 
 const weightDropdowns = document.querySelectorAll(".weight-dropdown");
-export let weightsArray = [5, 2, 1, 2, 3, 1];
+export let weightsArray = [5, 3, 1, 2, 1, 4];
+
+export const noPrecipToggle = document.getElementById("only-no-precip");
 
 ///////////////////////////////////////////////////////////////////////////////
 // EVENT HANDLERS /////////////////////////////////////////////////////////////
@@ -187,16 +192,6 @@ defaultTimesButtons.forEach((button) => {
   });
 });
 
-// defaultWeekdayTimes.addEventListener("click", function () {
-//   toggleDefaultWeekdayTimes();
-//   toggleTimes();
-// });
-
-// defaultWeekendTimes.addEventListener("click", function () {
-//   toggleDefaultWeekendTimes();
-//   toggleTimes();
-// });
-
 document
   .getElementById("choice-absolute")
   .addEventListener("click", function () {
@@ -213,7 +208,6 @@ document
 
 allTimeButtons.forEach((timeButton) => {
   timeButton.addEventListener("click", function () {
-    userTimeAlterations = true;
     let isAbsolute = document.getElementById("choice-absolute").checked;
     updatePreferredTimeAndScore();
     getCheckedTimeButtons(isAbsolute);
@@ -247,15 +241,16 @@ uvSlider.addEventListener("input", function () {
   updatePreferredTimeAndScore();
 });
 
-precipitationIntensitySlider.addEventListener("input", function () {
-  precipitationIntensityValue.innerHTML = printPrecipitationIntensity(
-    precipitationIntensitySlider.value
-  );
+windSpeedSlider.addEventListener("input", function () {
+  displayWindSpeed(windSpeedValue, windSpeedSlider, windSpeedLimit, isMetric);
   updatePreferredTimeAndScore();
 });
 
-windSpeedSlider.addEventListener("input", function () {
-  displayWindSpeed(windSpeedValue, windSpeedSlider, windSpeedLimit, isMetric);
+precipitationIntensitySlider.addEventListener("input", function () {
+  precipitationIntensityValue.innerHTML = printPrecipitationIntensity(
+    precipitationIntensitySlider.value,
+    isMetric
+  );
   updatePreferredTimeAndScore();
 });
 
@@ -286,20 +281,23 @@ parameterChecks.forEach((checkbox) => {
         connectedSliderId = "uv";
         connectedDropdownId = "uvDropdown";
         break;
-      case "precipCheck":
-        index = 4;
-        connectedSliderId = "precip_intensity";
-        connectedDropdownId = "precipDropdown";
-        break;
       case "windCheck":
-        index = 5;
+        index = 4;
         connectedSliderId = "wind_speed";
         connectedDropdownId = "windDropdown";
+        break;
+      case "precipCheck":
+        index = 5;
+        connectedSliderId = "precip_intensity";
+        connectedDropdownId = "precipDropdown";
         break;
     }
     if (!event.target.checked) {
       document.getElementById(connectedSliderId).setAttribute("disabled", "");
       document.getElementById(connectedDropdownId).setAttribute("disabled", "");
+      if (index == 5) {
+        noPrecipToggle.setAttribute("disabled", "");
+      }
     } else {
       document
         .getElementById(connectedSliderId)
@@ -307,6 +305,9 @@ parameterChecks.forEach((checkbox) => {
       document
         .getElementById(connectedDropdownId)
         .removeAttribute("disabled", "");
+      if (index == 5) {
+        noPrecipToggle.removeAttribute("disabled", "");
+      }
     }
     parameterIncludeArray[index] = Number(event.target.checked);
     updatePreferredTimeAndScore();
@@ -330,16 +331,36 @@ weightDropdowns.forEach((dropdown) => {
       case "uvDropdown":
         index = 3;
         break;
-      case "precipDropdown":
+      case "windDropdown":
         index = 4;
         break;
-      case "windDropdown":
+      case "precipDropdown":
         index = 5;
         break;
     }
     weightsArray[index] = Number(event.target.value);
     updatePreferredTimeAndScore();
   });
+});
+
+noPrecipToggle.addEventListener("change", function () {
+  const slider = document.getElementById("precip_intensity");
+  const weightDropdown = document.getElementById("precipDropdown");
+  if (noPrecipToggle.checked) {
+    slider.value = "0";
+    precipitationIntensityValue.innerHTML = printPrecipitationIntensity(
+      precipitationIntensitySlider.value,
+      isMetric
+    );
+    slider.setAttribute("disabled", "");
+    weightDropdown.setAttribute("disabled", "");
+    weightsArray[5] = 0;
+  } else {
+    slider.removeAttribute("disabled", "");
+    weightDropdown.removeAttribute("disabled", "");
+    weightsArray[5] = slider.value;
+  }
+  updatePreferredTimeAndScore();
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -351,7 +372,7 @@ for (let i = 0; i < 3; i++) {
     : [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
   userSolarSelections[i] = isWeekday(currentTime.getDay() + i)
     ? [1, 2, 5, 6]
-    : [2, 3, 4, 5];
+    : [3, 4, 5];
 }
 
 let currentHour = getTime(currentTime);
@@ -376,20 +397,31 @@ displayDewPoint(dewPointValue, dewPointSlider, dewPointLimit, isMetric);
 cloudCoverValue.innerHTML = printCloudCover(cloudCoverSlider.value);
 uvValue.innerText = uvSlider.value;
 colorUvValue(uvValue, uvSlider.value);
-precipitationIntensityValue.innerText = printPrecipitationIntensity(
-  precipitationIntensitySlider.value
-);
 windSpeedValue.innerText = windSpeedSlider.value;
 displayWindSpeed(windSpeedValue, windSpeedSlider, windSpeedLimit, isMetric);
+precipitationIntensityValue.innerText = printPrecipitationIntensity(
+  precipitationIntensitySlider.value,
+  isMetric
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 // API REQUESTS AND DATA HANDLING /////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+/**
+ * Handles the user submitting their location
+ * @param {Event} event - the submit event
+ */
 function handleFormSubmit(event) {
   event.preventDefault();
   processUserLocation(locationField.value);
 }
 
+/**
+ * Rounds longitude and latitude and specifies N, S, E or W
+ * @param {number} longitude - the longitude coordinate
+ * @param {number} latitude - the latitute coordinate
+ * @returns {string()} - the formatted coordinates
+ */
 function processCoordinates(longitude, latitude) {
   let latitudeOut =
     latitude >= 0
@@ -404,10 +436,21 @@ function processCoordinates(longitude, latitude) {
   return `(${latitudeOut}, ${longitudeOut})`;
 }
 
+/**
+ * Checks if a string could be a valid USA ZIP Code
+ *
+ * NB - Does not check if the valid ZIP Code actually exists.
+ * @param {string} str
+ * @returns {boolean}
+ */
 function isUSAZipCode(str) {
   return /^\d{5}(-\d{4})?$/.test(str);
 }
 
+/**
+ * Processes the location the user has entered.
+ * @param {string} entry
+ */
 function processUserLocation(entry) {
   var url;
   if (isUSAZipCode(entry)) {
@@ -418,7 +461,6 @@ function processUserLocation(entry) {
     )}&format=geocodejson`;
   }
 
-  //   console.log(url);
   fetch(url)
     .then(function (response) {
       return response.json();
@@ -442,6 +484,11 @@ function processUserLocation(entry) {
     });
 }
 
+/**
+ * Gets the timing for 3 days' worth of solar events for a given location.
+ * @param {number} lat - the latitude of the location
+ * @param {number} long - the longitude of the location
+ */
 function getSolarTimes(lat, long) {
   var date = new Date();
   var start = date.toISOString().split("T")[0];
@@ -464,6 +511,11 @@ function getSolarTimes(lat, long) {
     });
 }
 
+/**
+ * Gets the hourly weather forecast for 3 days for a given location.
+ * @param {number} lat - the latitude of the location
+ * @param {number} long - the longitude of the location
+ */
 function getCurrentWeather(lat, long) {
   var url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current=temperature_2m,apparent_temperature,is_day&hourly=temperature_2m,dew_point_2m,precipitation_probability,precipitation,weather_code,cloud_cover,wind_speed_10m,uv_index&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=3`;
   fetch(url)
@@ -487,8 +539,8 @@ function getCurrentWeather(lat, long) {
         data.hourly.dew_point_2m,
         data.hourly.cloud_cover,
         data.hourly.uv_index,
-        data.hourly.precipitation,
-        data.hourly.wind_speed_10m
+        data.hourly.wind_speed_10m,
+        data.hourly.precipitation
       );
 
       document.getElementById(
