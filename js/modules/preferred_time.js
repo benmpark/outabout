@@ -16,7 +16,11 @@ import {
   weatherForecast,
 } from "../custom_script.js";
 
-import { absTimeButtonIds, solarTimeButtonIds } from "./time_preferences.js";
+import {
+  absTimeButtonIds,
+  solarTimeButtonIds,
+  checkIfNoTimes,
+} from "./time_preferences.js";
 
 import {
   daySelection,

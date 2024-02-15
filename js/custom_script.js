@@ -49,7 +49,11 @@ export let sunTimes;
 export let localConditions;
 export let weatherForecast;
 export let userAbsSelections = [[], [], []];
+const weekdayDefaultAbsTimes = [6, 7, 8, 17, 18];
+const weekendDefaultAbsTimes = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 export let userSolarSelections = [[], [], []];
+const weekdayDefaultSolarTimes = [1, 2, 5, 6];
+const weekendDefaultSolarTimes = [2, 3, 4];
 
 ///////////////////////////////////////////////////////////////////////////////
 // DOM ELEMENTS SELECTION /////////////////////////////////////////////////////
@@ -366,13 +370,30 @@ noPrecipToggle.addEventListener("change", function () {
 ///////////////////////////////////////////////////////////////////////////////
 // INITIALIZATION & SETUP /////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 24; i++) {
+  if (i >= getTime()) {
+    if (isWeekday(currentTime.getDay()) && weekdayDefaultAbsTimes.includes(i)) {
+      userAbsSelections[0].push(i);
+    } else if (
+      !isWeekday(currentTime.getDay()) &&
+      weekendDefaultAbsTimes.includes(i)
+    ) {
+      userAbsSelections[0].push(i);
+    }
+  }
+}
+
+userSolarSelections[0] = isWeekday(currentTime.getDay())
+  ? weekdayDefaultSolarTimes
+  : weekendDefaultSolarTimes;
+
+for (let i = 1; i < 3; i++) {
   userAbsSelections[i] = isWeekday(currentTime.getDay() + i)
-    ? [6, 7, 8, 17, 18]
-    : [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+    ? weekdayDefaultAbsTimes
+    : weekendDefaultAbsTimes;
   userSolarSelections[i] = isWeekday(currentTime.getDay() + i)
-    ? [1, 2, 5, 6]
-    : [3, 4, 5];
+    ? weekdayDefaultSolarTimes
+    : weekendDefaultSolarTimes;
 }
 
 let currentHour = getTime(currentTime);

@@ -130,7 +130,7 @@ function toggleDefaultWeekdayTimes() {
   } else {
     userSolarSelections[daySelection] = [1, 2, 5, 6];
   }
-  showTimesAlert(false);
+  showTimesAlert(true);
 }
 
 /**
@@ -242,28 +242,73 @@ function toggleTimes() {
  * @param boolean isWeekday - Whether today is a weekday or not.
  */
 function showTimesAlert(isWeekday) {
+  const isAbsolute = document.getElementById("choice-absolute").checked;
   const alertSpace = document.getElementById("times-alert-space");
   let hour = getTime();
   let allSome;
   let dayType;
-  if (daySelection || (isWeekday && hour <= 6) || (!isWeekday && hour <= 8)) {
-    alertSpace.innerHTML = ``;
-    return;
-  }
-  if (!daySelection && isWeekday && hour > 6 && hour <= 18) {
-    allSome = "Some";
-    dayType = "weekday";
-  } else if (!daySelection && isWeekday && hour > 18) {
-    allSome = "All";
-    dayType = "weekday";
-  } else if (!daySelection && !isWeekday && hour > 8 && hour <= 18) {
-    allSome = "Some";
-    dayType = "weekend";
-  } else if (!daySelection && !isWeekday && hour > 18) {
-    allSome = "All";
-    dayType = "weekend";
+  if (isAbsolute) {
+    if (daySelection || (isWeekday && hour <= 6) || (!isWeekday && hour <= 8)) {
+      alertSpace.innerHTML = ``;
+      return;
+    }
+    if (!daySelection && isWeekday && hour > 6 && hour <= 18) {
+      allSome = "Some";
+      dayType = "weekday";
+    } else if (!daySelection && isWeekday && hour > 18) {
+      allSome = "All";
+      dayType = "weekday";
+    } else if (!daySelection && !isWeekday && hour > 8 && hour <= 18) {
+      allSome = "Some";
+      dayType = "weekend";
+    } else if (!daySelection && !isWeekday && hour > 18) {
+      allSome = "All";
+      dayType = "weekend";
+    } else {
+      console.log("Something weird happened...");
+    }
   } else {
-    console.log("Something weird happened...");
+    if (
+      !sunTimes ||
+      daySelection ||
+      (isWeekday && hour <= sunTimes.allEventHours[0][1]) ||
+      (!isWeekday && hour <= sunTimes.allEventHours[0][3])
+    ) {
+      alertSpace.innerHTML = ``;
+      return;
+    } else if (
+      !daySelection &&
+      isWeekday &&
+      hour > sunTimes.allEventHours[0][1] &&
+      hour <= sunTimes.allEventHours[0][6]
+    ) {
+      allSome = "Some";
+      dayType = "weekday";
+    } else if (
+      !daySelection &&
+      isWeekday &&
+      hour > sunTimes.allEventHours[0][6]
+    ) {
+      allSome = "All";
+      dayType = "weekday";
+    } else if (
+      !daySelection &&
+      !isWeekday &&
+      hour > sunTimes.allEventHours[0][3] &&
+      hour <= sunTimes.allEventHours[0][5]
+    ) {
+      allSome = "Some";
+      dayType = "weekend";
+    } else if (
+      !daySelection &&
+      !isWeekday &&
+      hour > sunTimes.allEventHours[0][5]
+    ) {
+      allSome = "All";
+      dayType = "weekend";
+    } else {
+      console.log("Something weird happened...");
+    }
   }
   alertSpace.innerHTML = `<div id="times-alert" class="alert alert-warning alert-dismissible fade show" 
       role="alert">${allSome} of the default ${dayType} times have already passed today.<button type="button" 
@@ -352,6 +397,7 @@ export {
   checkIfDefaultTimes,
   toggleTimes,
   hideTimesAlert,
+  checkIfNoTimes,
   updateSolarTimes,
   getCheckedTimeButtons,
 };
