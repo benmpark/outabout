@@ -8,476 +8,75 @@
     <meta name="description" content="Find a time to get outside" />
     <meta name="author" content="Benjamin Park" />
 
-    <link rel="icon" type="image/png" sizes="16x16" rel="noopener" target="_blank" href="/img/site_icons/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" rel="noopener" target="_blank" href="/img/site_icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" rel="noopener" target="_blank" href="/img/site_icons/favicon-96x96.png">
-    <link rel="apple-touch-icon" sizes="180x180" rel="noopener" target="_blank" href="/img/site_icons/favicon-180x180.png">
-    <link rel="icon" type="image/png" sizes="512x512" rel="noopener" target="_blank" href="/img/site_icons/favicon-512x512.png">
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      rel="noopener"
+      target="_blank"
+      href="/img/site_icons/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      rel="noopener"
+      target="_blank"
+      href="/img/site_icons/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      rel="noopener"
+      target="_blank"
+      href="/img/site_icons/favicon-96x96.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      rel="noopener"
+      target="_blank"
+      href="/img/site_icons/favicon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="512x512"
+      rel="noopener"
+      target="_blank"
+      href="/img/site_icons/favicon-512x512.png"
+    />
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
     />
+    <link rel="stylesheet" href="../../../css/general_styles.css" />
     <link rel="stylesheet" href="css/custom.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://indestructibletype.com/fonts/Jost.css" type="text/css" charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="https://indestructibletype.com/fonts/Jost.css"
+      type="text/css"
+      charset="utf-8"
+    />
 
     <script type="module" src="js/custom_script.js"></script>
     <script type="module" src="js/modules/utilities.js"></script>
     <script type="module" src="js/modules/solar_data.js"></script>
     <script type="module" src="js/modules/weather_data.js"></script>
   </head>
-
   <body>
-    <header>
-      <h1 class="display-2" style="font-weight: 500; margin-bottom: 0; padding-bottom: 0;">Outabout</h1>
-      <h4 style="margin-top: 0; padding-top: 0;">Find a time to get outside</h4>
-    </header>
-
-    <main class="container-lg mt-4">
-      <section class="mb-2 bg-light" id="forecast_range_and_results">
-        <div
-          class="btn-group d-flex w-100"
-          role="group"
-          aria-label="Forecast Range Buttons"
-        >
-          <input type="radio" class="btn-check day-button" name="day_button" id="choice-today" autocomplete="off">
-          <label class="btn btn-outline-primary" id="yo-yo" for="choice-today">Today<br><span class="daily-min-max" id="today-hi-lo"></span></label>
-
-          <input type="radio" class="btn-check day-button" name="day_button" id="choice-tomorrow" autocomplete="off">
-          <label class="btn btn-outline-primary" for="choice-tomorrow">Tomorrow<br><span class="daily-min-max" id="tomorrow-hi-lo"></span></label>
-
-          <input type="radio" class="btn-check day-button" name="day_button" id="choice-dayafter" autocomplete="off">
-          <label class="btn btn-outline-primary" for="choice-dayafter"><span id="day-after-text">The Day After</span><br><span class="daily-min-max" id="day-after-hi-lo"></span></label>
-        </div>
-
-        <div class="border border-primary mx-0 my-0 py-2 light-shade">
-          <div class="row main_info mx-2">
-            <div class="col-xl-7 col-md-8 col-12"><span id="best-time-text">The best time to get outside <span id="target_day">later today</span> is <strong><span id="best-time">???</span></strong>.</span></div>
-            <div class="col-xl-5 col-md-4 col-12">Score: <span id="best_score"></span></div>
-            <div class="col-12" id="best-time-forecast"></div>
-          </div>
-          <div class="row main_info mt-2 mx-2" id="preferred_row">
-            <div class="col-xl-7 col-md-8 col-12"><span id="preferred-time-text">With a location and times selected below, you can see your best preferred time.</span></div>
-            <div class="col-xl-5 col-md-4 col-12">Score: <span id="best_preferred_score"></span></div>
-            <div class="col-12" id="preferred-time-forecast"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="location_info" class="mt-0">
-        <div class="border border-primary pt-3 mb-2 bg-light">
-          <h2>Location & Current Conditions</h2>
-          <div class="row pt-2 mb-2 mx-2">
-            <div class="col-xl-4 col-lg-5 col-md-5 col-12">
-              <form class="input-group" id="location-form">
-                <input type="text" class="form-control mt-1" id="location" placeholder="City, State; ZIP Code; or Landmark">
-                <button class="btn btn-primary mt-1" type="submit" id="location_submit">Submit</button>
-              </form>
-            </div>
-            <div class="col-xl-2 col-lg-3 col-md-3 col-6">
-              <button type="button" class="btn btn-info mt-1 w-100" id="auto-location">Auto Location</button>
-            </div>
-            <div class="btn-group col-xl-3 col-lg-4 col-md-4 col-6 mt-1" role="group" aria-label="General Units Radio Choices">
-              <input type="radio" class="btn-check units-buttons" name="general_units_button" id="imperial0" autocomplete="off" checked>
-              <label class="btn btn-outline-primary" for="imperial0">&#8457;, mph</label>
-    
-              <input type="radio" class="btn-check units-buttons" name="general_units_button" id="metric0" autocomplete="off">
-              <label class="btn btn-outline-primary" for="metric0">&#8451;, km/h</label>
-            </div>
-          </div>
-          <div class="row mx-2">
-            <span id="location-alert-space"></span>
-          </div>
-          <div class="mt-1 mx-4"><span id="found-location"></span> <span id="coordinates"></span></div>
-          <div class="mb-3 mx-4" id="current-conditions">
-            <label for="location" class="form-label"><em>Enter a location above.</em></label>
-          </div>
-        </div>
-      </section>
-
-      <section class="mb-2 bg-light" id="settings">
-        <div class="border border-primary pt-3 px-4">
-          <h2>Preferred Times</h2>
-
-          <div class="row mt-3">
-            <div
-            class="btn-group d-flex pb-3"
-            role="group"
-            aria-label="Time Buttons"
-            >
-              <input type="radio" class="btn-check" name="time_options_button" id="choice-absolute" autocomplete="off" checked>
-              <label class="btn btn-outline-primary w-50 time-options" for="choice-absolute">Absolute</label>
-
-              <input type="radio" class="btn-check" name="time_options_button" id="choice-relative" autocomplete="off">
-              <label class="btn btn-outline-primary w-50 time-options" for="choice-relative">Relative to Sun</label>
-            </div>
-            
-            <div id="absolute_hours">
-            <div class="row px-3"> 
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="12am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="12am">12 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="1am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="1am">1 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="2am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="2am">2 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="3am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="3am">3 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="4am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="4am">4 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="5am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="5am">5 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekday" id="6am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="6am">6 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekday" id="7am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="7am">7 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekday weekend" id="8am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="8am">8 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekend" id="9am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100 " for="9am">9 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekend" id="10am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100 " for="10am">10 am</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekend" id="11am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100 " for="11am">11 am</label>
-              </div>
-            </div>
-            <div class="row px-3">
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekend" id="12pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100 " for="12pm">12 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekend" id="1pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100 " for="1pm">1 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekend" id="2pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100 " for="2pm">2 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekend" id="3pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100 " for="3pm">3 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekend" id="4pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100 " for="4pm">4 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekday weekend" id="5pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="5pm">5 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock weekday weekend" id="6pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="6pm">6 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="7pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="7pm">7 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="8pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="8pm">8 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="9pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="9pm">9 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="10pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="10pm">10 pm</label>
-              </div>
-              <div class="col-2 col-lg-1 px-0">
-                <input type="checkbox" class="btn-check clock" id="11pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="11pm">11 pm</label>
-              </div>
-            </div>
-            </div>
-
-            <div id="sun_hours" class="d-none">
-            <div class="row px-3">
-              <div class="col-6 col-lg-3 px-0">
-                <input type="checkbox" class="btn-check sun" id="night_am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="night_am">Before Civil Dawn<br><span class="solar-times" id="pre-dawn-time"></span></label>
-              </div>
-              <div class="col-6 col-lg-3 px-0">
-                <input type="checkbox" class="btn-check sun weekday" id="civil_am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="civil_am">Civil Dawn<br><span class="solar-times" id="dawn-time"></span></label>
-              </div>
-              <div class="col-6 col-lg-3 px-0">
-                <input type="checkbox" class="btn-check sun weekday weekend" id="golden_am" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="golden_am">AM Golden Hour<br><span class="solar-times" id="am-golden-time"></span></label>
-              </div>
-              <div class="col-6 col-lg-3 px-0">
-                <input type="checkbox" class="btn-check sun weekend" id="morning" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="morning">Morning<br><span class="solar-times" id="morning-time"></span></label>
-              </div>
-            </div>
-            <div class="row px-3">
-              <div class="col-6 col-lg-3 px-0">
-                <input type="checkbox" class="btn-check sun weekend" id="afternoon" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="afternoon">Afternoon<br><span class="solar-times" id="afternoon-time"></span></label>
-              </div>
-              <div class="col-6 col-lg-3 px-0">
-                <input type="checkbox" class="btn-check sun weekday weekend" id="golden_pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="golden_pm">PM Golden Hour<br><span class="solar-times" id="pm-golden-time"></span></label>
-              </div>
-              <div class="col-6 col-lg-3 px-0">
-                <input type="checkbox" class="btn-check sun weekday" id="civil_pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="civil_pm">Civil Dusk<br><span class="solar-times" id="dusk-time"></span></label>
-              </div>
-              <div class="col-6 col-lg-3 px-0">
-                <input type="checkbox" class="btn-check sun" id="night_pm" autocomplete="off">
-                <label class="btn btn-outline-dark btn-time w-100" for="night_pm">After Civil Dusk<br><span class="solar-times" id="post-dusk-time"></span></label>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mx-0 mt-3 mb-4">
-            <!-- <div class="col-lg-4 col-md-6 col-12"> -->
-              <div class="btn-group col-12" role="group" aria-label="Weekday/Weekend Default Times Buttons">
-                <button type="button" class="btn btn-outline-primary default-times-button w-50" id="default-weekday">Set Default Weekday Times</button>
-                <button type="button" class="btn btn-outline-primary default-times-button w-50" id="default-weekend">Set Default Weekend Times</button>
-              </div>
-              <div class="col-6 mx-0 mt-2" id="times-alert-space"></div>
-          </div>
-            <!-- </div> -->
-            <!-- <div class="col-lg-8 col-md-6 col-12"> -->
-              
-            <!-- </div> -->
-          
-
-          <h2>Preferred Conditions</h2>
-          <div class="btn-group mt-0" role="group" aria-label="Units Radio Choices" style="width: 250px;">
-            <input type="radio" class="btn-check units-buttons" name="units_button" id="imperial1" autocomplete="off" checked>
-            <label class="btn btn-outline-primary" for="imperial1">&#8457;, mph</label>
-
-            <input type="radio" class="btn-check units-buttons" name="units_button" id="metric1" autocomplete="off">
-            <label class="btn btn-outline-primary" for="metric1">&#8451;, km/h</label>
-          </div>
-          <div class="row mt-3">
-            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
-              <div class="d-flex">
-                <div class="form-check">
-                  <input class="form-check-input parameter-include" type="checkbox" value="" id="temperatureCheck" checked>
-                </div>
-                <label class="form-label" for="temperature">Temperature:&nbsp;</label>
-                <span id="temperature_value"></span><span class="degrees">&#8457</span><span id="temp_limit"></span>
-              </div>
-              <div class="range">
-                <input type="range" class="form-range" id="temperature" min="0" value="65" max="100"/>
-              </div>
-              <div class="relative-settings d-flex align-items-center">
-                <em class="me-2">Relative weight:&nbsp;</em>
-                <div class="input-group" id="temperatureWeight">
-                  <select class="form-select weight-dropdown" id="temperatureDropdown">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5" selected>5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
-              <div class="d-flex">
-                <div class="form-check">
-                  <input class="form-check-input parameter-include" type="checkbox" value="" id="dewPointCheck" checked>
-                </div>
-                <label class="form-label" for="dew_point">Dew Point:&nbsp;</label>
-                <span id="dewpoint_value"></span><span class="degrees">&#8457;</span><span id="dewpoint_limit"></span>&nbsp;&nbsp;&nbsp;
-                <a tabindex="0" class="" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="right" data-bs-html="true" data-bs-content="The dew point of a given body of air is the temperature to which it must be cooled to become saturated with water vapor. <a href='https://en.wikipedia.org/wiki/Dew_point'>More...</a>"><i class="bi bi-question-circle"></i></a>
-              </div>
-              <div class="range">
-                <input type="range" class="form-range" id="dew_point" min="40" value="55" max="80"/>
-              </div>
-              <div class="relative-settings d-flex align-items-center">
-                <em class="me-2">Relative weight:&nbsp;</em>
-                <div class="input-group" id="dewPointWeight">
-                  <select class="form-select weight-dropdown" id="dewPointDropdown">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
-              <div class="d-flex">
-                <div class="form-check">
-                  <input class="form-check-input parameter-include" type="checkbox" value="" id="cloudCoverCheck">
-                </div>
-                <label class="form-label" for="cloud_cover">Cloud Cover:&nbsp;</label>
-                <span id="cloudcover_value">Sunny &#9728;</span>
-              </div>
-              <div class="range">
-                <input type="range" class="form-range" id="cloud_cover" min="0" value="0" max="100" disabled/>
-              </div>
-              <div class="relative-settings d-flex align-items-center">
-                <em class="me-2">Relative weight:&nbsp;</em>
-                <div class="input-group" id="cloudCoverWeight">
-                  <select class="form-select weight-dropdown" id="cloudCoverDropdown">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
-              <div class="d-flex">
-                <div class="form-check">
-                  <input class="form-check-input parameter-include" type="checkbox" value="" id="uvCheck" checked>
-                </div>
-                <label class="form-label" for="uv">UV Index:&nbsp;</label>
-                <span id="uv_value">1</span><span id="uv_limit" style="color: #bc061e;"></span>
-              </div>
-              <div class="range">
-                <input type="range" class="form-range" id="uv" min="0" value="2" max="8"/>
-              </div>
-              <div class="relative-settings d-flex align-items-center">
-                <em class="me-2">Relative weight:&nbsp;</em>
-                <div class="input-group" id="uvWeight">
-                  <select class="form-select weight-dropdown" id="uvDropdown">
-                    <option value="1">1</option>
-                    <option value="2" selected>2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
-              <div class="d-flex">
-                <div class="form-check">
-                  <input class="form-check-input parameter-include" type="checkbox" value="" id="windCheck">
-                </div>
-                <label class="form-label" for="wind_speed">Wind:&nbsp;</label>
-                <span id="windspeed_value">0</span>&nbsp;</span><span class="speeds">mph</span><span id="windpseed_limit"></span>
-              </div>
-              <div class="range">
-                <input type="range" class="form-range" id="wind_speed" min="0" value="5" max="30" disabled/>
-              </div>
-              <div class="relative-settings d-flex align-items-center">
-                <em class="me-2">Relative weight:&nbsp;</em>
-                <div class="input-group" id="windWeight">
-                  <select class="form-select weight-dropdown" id="windDropdown">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-6 col-12 mt-4 mb-3">
-              <div class="d-flex">
-                <div class="form-check">
-                  <input class="form-check-input parameter-include" type="checkbox" value="" id="precipCheck" checked>
-                </div>
-                <label class="form-label" for="precip_intensity">Precip.:&nbsp;</label>
-                <span id="precip_value">None</span>
-              </div>
-              <div class="range">
-                <input type="range" class="form-range" id="precip_intensity" min="0" value="0" max="0.3" step="0.01" disabled/>
-              </div>
-              <div class="relative-settings d-flex align-items-center">
-                <em class="me-2">Relative weight:&nbsp;</em>
-                <div class="input-group" id="precipWeight">
-                  <select class="form-select weight-dropdown" id="precipDropdown" disabled>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4" selected>4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-check form-switch mt-2">
-                <input class="form-check-input" type="checkbox" role="switch" id="only-no-precip" checked>
-                <label class="form-check-label" for="only-no-precip">Exclude times with precipitation</label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <p id="testing"></p>
-    </main>
-    <footer>
-      <div>
-        <p>&copy; Copyright 2024 Benjamin Park</p>
-      </div>
-    </footer>
-
-    <!-- Include your JavaScript files here -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-            crossorigin="anonymous">
-    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
